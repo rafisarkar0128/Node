@@ -1,25 +1,37 @@
-/** @type {import("@types/index").EventStructure} */
-module.exports = {
-  name: "playerDestroy",
-  player: true,
+const BaseEvent = require("@structures/BaseEvent.js");
+
+/**
+ * A new Event extended from BaseEvent
+ * @extends {BaseEvent}
+ */
+module.exports = class Event extends BaseEvent {
+  constructor() {
+    super({
+      name: "playerDestroy",
+      lavalink: true
+    });
+  }
+
   /**
+   * Execute function for this event
+   * @param {import("@structures/BotClient.js")} client
+   * @param {import("@structures/BotClient.js")} client
    * @param {import("lavalink-client").Player} player
    * @param {string} reason
+   * @returns {Promise<void>}
    */
-  async execute(client, player) {
-    const guild = client.guilds.cache.get(player.guildId);
-    if (!guild) return;
-
+  async execute(client, player, reason) {
     /** @type {import("discord.js").TextBasedChannel} */
-    const channel = guild.channels.cache.get(player.textChannelId);
+    const channel = client.channels.cache.get(player.textChannelId);
     if (!channel) return;
 
-    const messageId = player.get("messageId");
-    if (!messageId) return;
+    const message = (
+      await channel.messages.fetch({
+        force: true
+      })
+    ).get(player.get("messageId"));
 
-    const message = await channel.messages.fetch(messageId);
-    if (!message) return;
-
-    await message.edit({ components: [] }).catch(console.error);
+    if (!message || !message.editable) return;
+    await message.edit({ components: [] }).catch(() => null);
   }
 };

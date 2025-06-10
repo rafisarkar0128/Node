@@ -144,20 +144,21 @@ function checkForChangesInOptions(oldOptions, newOptions) {
 
     if (oldOption.type !== newOption.type) return true;
 
-    if ((oldOption.required ?? false) !== (newOption?.required ?? false))
+    if ((oldOption.required ?? false) !== (newOption?.required ?? false)) {
       return true;
-
+    }
     if (
       (oldOption.autocomplete ?? false) !== (newOption?.autocomplete ?? false)
     ) {
       return true;
     }
 
-    if ((oldOption.minLength ?? 0) !== (newOption?.min_length ?? 0))
+    if ((oldOption.minLength ?? 0) !== (newOption?.min_length ?? 0)) {
       return true;
-    if ((oldOption.maxLength ?? 0) !== (newOption?.max_length ?? 0))
+    }
+    if ((oldOption.maxLength ?? 0) !== (newOption?.max_length ?? 0)) {
       return true;
-
+    }
     if ((oldOption.minValue ?? 0) !== (newOption.min_value ?? 0)) return true;
     if ((oldOption.maxValue ?? 0) !== (newOption.max_value ?? 0)) return true;
 
@@ -165,9 +166,9 @@ function checkForChangesInOptions(oldOptions, newOptions) {
       if ((oldOption.choices.length ?? 0) !== (newOption.choices.length ?? 0)) {
         return true;
       }
-
-      if (checkForChangeInChoices(oldOption.choices, newOption.choices))
+      if (checkForChangeInChoices(oldOption.choices, newOption.choices)) {
         return true;
+      }
     }
 
     if (oldOption.channelTypes || newOption.channel_types) {
@@ -189,8 +190,9 @@ function checkForChangesInOptions(oldOptions, newOptions) {
     }
 
     if (oldOption.options || newOption.options) {
-      if (checkForChangesInOptions(oldOption.options, newOption.options))
+      if (checkForChangesInOptions(oldOption.options, newOption.options)) {
         return true;
+      }
     }
   }
 
@@ -202,14 +204,13 @@ function checkForChangesInOptions(oldOptions, newOptions) {
  * @param {import("discord.js").APIApplicationCommandOptionChoice[]} newChoices
  * @returns {boolean}
  */
-function checkForChangeInChoices(oldChoices, newChoices) {
+function checkForChangeInChoices(oldChoices = [], newChoices = []) {
   for (const newChoice of newChoices) {
     const oldChoice = oldChoices?.find(
       (choice) => choice.name === newChoice.name
     );
 
     if (!oldChoice) return true;
-
     if (oldChoice.value !== newChoice.value) return true;
 
     if (oldChoice.nameLocalizations || newChoice.name_localizations) {
@@ -232,14 +233,16 @@ function checkForChangeInChoices(oldChoices, newChoices) {
  * @param {import("discord.js").LocalizationMap} newLocalizations
  * @returns {boolean}
  */
-function checkForChangeInLocalizations(oldLocalizations, newLocalizations) {
-  if (!oldLocalizations) oldLocalizations = {};
-  if (!newLocalizations) newLocalizations = {};
+function checkForChangeInLocalizations(
+  oldLocalizations = {},
+  newLocalizations = {}
+) {
   let isLocalesChanged = false;
 
   Object.values(Locale).forEach((locale) => {
-    if (oldLocalizations[locale] !== newLocalizations[locale])
+    if (oldLocalizations[locale] !== newLocalizations[locale]) {
       isLocalesChanged = true;
+    }
   });
 
   return isLocalesChanged;

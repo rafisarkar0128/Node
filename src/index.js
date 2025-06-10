@@ -1,11 +1,12 @@
+console.clear(); // clearing the console before initializing.
 require("dotenv").config(); // Load environment variables from .env file
 require("module-alias/register"); // Register module aliases
 
 const { GatewayIntentBits, Partials } = require("discord.js");
-const { Bot } = require("@lib/Bot.js");
+const BotClient = require("./structures/BotClient.js");
 
 // Initializing the client with necessary intents and partials
-const client = new Bot({
+const client = new BotClient({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
@@ -43,42 +44,7 @@ const client = new Bot({
   failIfNotExists: true
 });
 
-/**
- * A function to start everything
- * @returns {Promise<void>}
- */
-async function start() {
-  console.clear();
-
-  // Load welcome message
-  client.helpers.loadWelcome();
-
-  // Load anticrash system
-  client.helpers.antiCrash(client);
-
-  // Check and validate the configuraton
-  client.utils.validate();
-
-  // Load languages
-  await client.helpers.loadLanguages(client);
-
-  // Load events
-  await client.helpers.loadEvents(client, "src/events");
-
-  // Load commands
-  await client.helpers.loadCommands(client, "src/commands");
-
-  // Connect to the database
-  await client.db.connect(client);
-
-  // Log into the client
-  client.login(client.config.bot.token);
-}
-
 // Start the bot and handle any errors
-start().catch((error) => {
+client.start().catch((error) => {
   throw error;
 });
-
-// Exporting the client for other use
-module.exports = { client };

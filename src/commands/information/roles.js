@@ -1,34 +1,44 @@
+const BaseCommand = require("@structures/BaseCommand.js");
 const {
   SlashCommandBuilder,
-  EmbedBuilder,
+  InteractionContextType,
   ApplicationIntegrationType,
-  InteractionContextType
+  EmbedBuilder
 } = require("discord.js");
+const { t } = require("i18next");
 
-/** @type {import("@types/index").CommandStructure} */
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("roles")
-    .setDescription("Get the role list of a server.")
-    .setContexts(InteractionContextType.Guild)
-    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall),
-  usage: "",
-  category: "information",
-  cooldown: 25,
-  global: true,
-  premium: false,
-  devOnly: false,
-  disabled: false,
-  ephemeral: false,
-  voiceChannelOnly: false,
-  botPermissions: ["SendMessages", "ReadMessageHistory"],
-  userPermissions: ["SendMessages"],
+/**
+ * A new Command extended from BaseCommand
+ * @extends {BaseCommand}
+ */
+module.exports = class Command extends BaseCommand {
+  constructor() {
+    super({
+      data: new SlashCommandBuilder()
+        .setName("roles")
+        .setDescription(t("commands:roles.description"))
+        .setContexts(InteractionContextType.Guild)
+        .setIntegrationTypes(ApplicationIntegrationType.GuildInstall),
+      usage: "roles",
+      examples: ["roles"],
+      category: "information",
+      cooldown: 25,
+      global: true,
+      guildOnly: true
+    });
+  }
 
+  /**
+   * Execute function for this command.
+   * @param {import("@structures/BotClient.js")} client
+   * @param {import("discord.js").ChatInputCommandInteraction} interaction
+   * @returns {Promise<void>}
+   */
   async execute(client, interaction) {
     const roles = interaction.guild.roles.cache
       .sort((a, b) => b.position - a.position)
       .map((r) => r);
-    const embed = new EmbedBuilder().setColor(client.utils.getRandomColor());
+    const embed = new EmbedBuilder().setColor(client.color.getRandom());
     const roleEmbeds = [];
 
     if (roles.slice(0, 50)?.length) {
@@ -56,6 +66,6 @@ module.exports = {
       roleEmbeds.push(embed.toJSON());
     }
 
-    await interaction.followUp({ embeds: roleEmbeds });
+    await interaction.reply({ embeds: roleEmbeds });
   }
 };

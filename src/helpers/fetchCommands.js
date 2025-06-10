@@ -1,22 +1,20 @@
-const chalk = require("chalk");
+/**
+ * @typedef {Object} OldCommand
+ * @property {boolean} global
+ * @property {import("discord.js").ApplicationCommand} data
+ */
 
 /**
  * A function to fetch Application Commands
- * @param {import("@lib/Bot").Bot} client
- * @returns {Promise<import("@types/index").OldCommand[]>}
+ * @param {import("@structures/BotClient.js")} client
+ * @returns {Promise<OldCommand[]>}
  */
-async function fetchCommands(client) {
-  if (typeof client !== "object") {
-    throw new TypeError(
-      `The ${chalk.yellow(
-        "client"
-      )} parameter must be an object. Received type ${typeof client}`
-    );
-  }
-
+module.exports = async function (client) {
   try {
+    if (!client || !client.isReady()) {
+      throw new Error("Client is missing or not online.");
+    }
     const ApplicationCommands = [];
-
     const globalCommands = await client.application.commands.fetch({
       withLocalizations: true
     });
@@ -31,11 +29,8 @@ async function fetchCommands(client) {
     guildCommands.forEach((command) => {
       ApplicationCommands.push({ data: command, global: false });
     });
-
     return ApplicationCommands;
   } catch (error) {
     client.logger.error(error);
   }
-}
-
-module.exports = fetchCommands;
+};

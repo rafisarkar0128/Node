@@ -1,94 +1,106 @@
-const { Collection } = require("discord.js");
 const chalk = require("chalk");
+const { table } = require("table");
 const loadFiles = require("./loadFiles.js");
-const categories = require("@src/categories.js");
+const { Collection } = require("discord.js");
 
 /**
  * A function to load command modules
- * @param {import("@lib/Bot").Bot} client - The client object
- * @param {string} dir - The directory to load commands from
+ * @param {import("@structures/BotClient.js")} client
  * @returns {Promise<void>}
- * @example await loadCommands(client, "src/commands");
  */
-async function loadCommands(client, dir) {
-  if (typeof client !== "object") {
-    throw new TypeError(
-      `The ${chalk.yellow(
-        "client"
-      )} parameter must be an Object. Received type ${typeof client}`
-    );
-  }
+module.exports = async function (client) {
+  const tableData = [["Command", "Status"]];
+  /**
+   * Typings for table conifg.
+   * @type {import("table").TableUserConfig}
+   */
+  const tableConfig = {
+    columnDefault: {
+      alignment: "center"
+    },
+    border: client.utils.getTableBorder("blue"),
+    drawHorizontalLine: (lineIndex, rowCount) => {
+      return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount;
+    },
+    columns: [{ alignment: "left" }, { width: 6 }]
+  };
 
-  if (typeof dir !== "string") {
-    throw new TypeError(
-      `The ${chalk.yellow(
-        "dir"
-      )} parameter must be a String. Received type ${typeof dir}`
-    );
-  }
-
-  const { Permissions } = client.config.resources;
+  const { Categories, Permissions } = client.resources;
   const { bot } = client.config;
-  const commandFiles = await loadFiles(dir, [".js"]);
+  const commandFiles = await loadFiles("src/commands", [".js"]);
+
   client.commands.clear();
+  client.cooldowns.clear();
+  let i = 0;
 
   for (const file of commandFiles) {
+    const filePath = `${chalk.yellow("filePath")} => ${chalk.yellow(file)}`;
     try {
-      const filename = chalk.yellow(file.split(/[\\/]/g).pop());
+      const Command = require(file);
+      /**
+       * Base Command as a type for auto completion
+       * @type {import("@structures/BaseCommand.js")}
+       */
+      const cmd = new Command();
 
-      /** @type {import("@types/command.js").CommandStructure} */
-      const command = require(file);
+      if (cmd.disabled) continue;
+      if (Categories[cmd.category]?.enabled === false) continue;
 
-      if (command.disabled) continue;
-
-      if (typeof command.data !== "object" || !command.data) {
-        throw new Error(`Command data is missing in ${filename}`);
+      if (cmd.category && !Object.keys(Categories).includes(cmd.category)) {
+        throw new Error(`"${cmd.category}" is not a valid command category.`);
       }
 
-      if (command?.category !== "none") {
-        if (categories[command.category]?.enabled === false) continue;
+      if (cmd.cooldown && typeof cmd.cooldown !== "number") {
+        throw new TypeError(`Command coodown must be a number.`);
       }
 
-      if ((command.cooldown ?? bot.defaultCooldown) > 0) {
-        if (!command.cooldown) command.cooldown = bot.defaultCooldown;
-        client.cooldowns.set(command.data.name, new Collection());
+      if (cmd.cooldown > 0) {
+        client.cooldowns.set(cmd.data.name, new Collection());
       }
 
-      if (command.global === undefined) command.global = bot.global;
+      if (!Array.isArray(cmd.permissions.bot)) {
+        throw new TypeError(
+          `Command permissions for bot must be an array of strings.`
+        );
+      }
 
-      if (command?.userPermissions?.length > 0) {
-        for (let p of command.userPermissions) {
-          if (!Permissions.includes(p)) {
-            throw new Error(
-              `${chalk.yellow(p)} is not a valid user permission in ${filename}`
-            );
-          }
+      for (const p of cmd.permissions.bot) {
+        if (!Permissions.includes(p)) {
+          throw new RangeError(`"${p}" is not a valid bot permission.`);
         }
       }
 
-      if (command?.botPermissions?.length > 0) {
-        for (let p of command.botPermissions) {
-          if (!Permissions.includes(p)) {
-            throw new Error(
-              `${chalk.yellow(p)} is not a valid bot permission in ${filename}`
-            );
-          }
+      if (!Array.isArray(cmd.permissions.user)) {
+        throw new TypeError(
+          `Command permissions for user must be an array of strings.`
+        );
+      }
+
+      for (const p of cmd.permissions.user) {
+        if (!Permissions.includes(p)) {
+          throw new RangeError(`"${p}" is not a valid user permission.`);
         }
       }
 
-      if (typeof command.execute !== "function" || !command.execute) {
-        throw new Error(`Execute function is missing in ${filename}`);
+      if (!cmd.execute || typeof cmd.execute !== "function") {
+        throw new Error(`Execute function is missing.`);
       }
 
-      client.commands.set(command.data.name, command);
+      if (!bot.global && cmd.global) cmd.global = bot.global;
+
+      i++;
+      client.commands.set(cmd.data.name, cmd);
+      client.applicationCommands.push(cmd.data?.toJSON());
+      tableData.push([chalk.blue(cmd.name), "» 🌱 «"]);
     } catch (error) {
       client.logger.error(error);
+      console.log(filePath);
+      tableData.push([chalk.red(file.split(/[\\|/]/g).pop()), "» 🔴 «"]);
     }
   }
 
-  client.logger.info(
-    `Loaded ${chalk.yellow(client.commands.size)} commands successfully`
-  );
-}
-
-module.exports = loadCommands;
+  if (client.config.showTable.command) {
+    console.log(table(tableData, tableConfig));
+  }
+  client.logger.info(`Loaded ${chalk.yellow(i)} commands successfully.`);
+};
