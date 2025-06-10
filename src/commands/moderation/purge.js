@@ -1,220 +1,238 @@
+const BaseCommand = require("@structures/BaseCommand.js");
 const {
   SlashCommandBuilder,
-  PermissionFlagsBits,
+  InteractionContextType,
   ApplicationIntegrationType,
-  InteractionContextType
+  PermissionFlagsBits
 } = require("discord.js");
 const { t } = require("i18next");
 
-/** @type {import("@root/src/types/command").CommandStructure} */
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("purge")
-    .setDescription("🧹 Delete bulk amount of messages.")
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-    .setContexts(InteractionContextType.Guild)
-    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
-    .addSubcommand((option) =>
-      option
-        .setName("after")
-        .setDescription("Delete messages that are after a specific message.")
-        .addStringOption((option) =>
+/**
+ * A new Command extended from BaseCommand
+ * @extends {BaseCommand}
+ */
+module.exports = class Command extends BaseCommand {
+  constructor() {
+    super({
+      data: new SlashCommandBuilder()
+        .setName("purge")
+        .setDescription(t("commands:purge.description"))
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+        .setContexts(InteractionContextType.Guild)
+        .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
+        .addSubcommand((option) =>
           option
-            .setName("message")
-            .setDescription("Message ID or Link to delete messages after.")
-            .setRequired(true)
+            .setName("after")
+            .setDescription(t("commands:purge.subcommands.after"))
+            .addStringOption((option) =>
+              option
+                .setName("message")
+                .setDescription(t("commands:purge.options.message"))
+                .setRequired(true)
+            )
         )
-    )
-    .addSubcommand((option) =>
-      option
-        .setName("any")
-        .setDescription("Delete any type of message.")
-        .addIntegerOption((option) =>
+        .addSubcommand((option) =>
           option
-            .setName("count")
-            .setDescription("Number of messages the bot should delete.")
-            .setMaxValue(100)
-            .setMinValue(1)
-            .setRequired(true)
+            .setName("any")
+            .setDescription(t("commands:purge.subcommands.any"))
+            .addIntegerOption((option) =>
+              option
+                .setName("amount")
+                .setDescription(t("commands:purge.options.amount"))
+                .setMinValue(1)
+                .setMaxValue(100)
+                .setRequired(true)
+            )
         )
-    )
-    .addSubcommand((option) =>
-      option
-        .setName("bots")
-        .setDescription("Delete messages sent by bots.")
-        .addIntegerOption((option) =>
+        .addSubcommand((option) =>
           option
-            .setName("count")
-            .setDescription("Number of messages the bot should delete.")
-            .setMaxValue(100)
-            .setMinValue(1)
-            .setRequired(true)
+            .setName("bots")
+            .setDescription(t("commands:purge.subcommands.bots"))
+            .addIntegerOption((option) =>
+              option
+                .setName("amount")
+                .setDescription(t("commands:purge.options.amount"))
+                .setMinValue(1)
+                .setMaxValue(100)
+                .setRequired(true)
+            )
         )
-    )
-    .addSubcommand((option) =>
-      option
-        .setName("commands")
-        .setDescription("Delete messages which are Slash Commands.")
-        .addIntegerOption((option) =>
+        .addSubcommand((option) =>
           option
-            .setName("count")
-            .setDescription("Number of messages the bot should delete.")
-            .setMaxValue(100)
-            .setMinValue(1)
-            .setRequired(true)
+            .setName("commands")
+            .setDescription(t("commands:purge.subcommands.commands"))
+            .addIntegerOption((option) =>
+              option
+                .setName("amount")
+                .setDescription(t("commands:purge.options.amount"))
+                .setMinValue(1)
+                .setMaxValue(100)
+                .setRequired(true)
+            )
         )
-    )
-    .addSubcommand((option) =>
-      option
-        .setName("embeds")
-        .setDescription("Delete messages which contain embeds.")
-        .addIntegerOption((option) =>
+        .addSubcommand((option) =>
           option
-            .setName("count")
-            .setDescription("Number of messages the bot should delete.")
-            .setMaxValue(100)
-            .setMinValue(1)
-            .setRequired(true)
+            .setName("embeds")
+            .setDescription(t("commands:purge.subcommands.embeds"))
+            .addIntegerOption((option) =>
+              option
+                .setName("amount")
+                .setDescription(t("commands:purge.options.amount"))
+                .setMinValue(1)
+                .setMaxValue(100)
+                .setRequired(true)
+            )
         )
-    )
-    .addSubcommand((option) =>
-      option
-        .setName("files")
-        .setDescription("Delete messages which contain files or attachments.")
-        .addIntegerOption((option) =>
+        .addSubcommand((option) =>
           option
-            .setName("count")
-            .setDescription("Number of messages the bot should delete.")
-            .setMaxValue(100)
-            .setMinValue(1)
-            .setRequired(true)
+            .setName("files")
+            .setDescription(t("commands:purge.subcommands.files"))
+            .addIntegerOption((option) =>
+              option
+                .setName("amount")
+                .setDescription(t("commands:purge.options.amount"))
+                .setMinValue(1)
+                .setMaxValue(100)
+                .setRequired(true)
+            )
         )
-    )
-    .addSubcommand((option) =>
-      option
-        .setName("user")
-        .setDescription("Delete messages sent by a specific user.")
-        .addUserOption((option) =>
+        .addSubcommand((option) =>
           option
             .setName("user")
-            .setDescription("Select a user whose message to delete.")
-            .setRequired(true)
-        )
-        .addIntegerOption((option) =>
-          option
-            .setName("count")
-            .setDescription("Number of messages the bot should delete.")
-            .setMaxValue(100)
-            .setMinValue(1)
-            .setRequired(true)
-        )
-    ),
-  usage: "[subcommand]: <subcommand> [options]: <options>",
-  category: "moderation",
-  cooldown: 25,
-  global: true,
-  premium: false,
-  devOnly: false,
-  disabled: false,
-  ephemeral: true,
-  voiceChannelOnly: false,
-  botPermissions: ["ModerateMembers", "ManageMessages"],
-  userPermissions: [
-    "ModerateMembers",
-    "ManageMessages",
-    "ViewChannel",
-    "ReadMessageHistory"
-  ],
-  execute: async (client, interaction, lng) => {
-    const { channel, options } = interaction;
-    const subcommand = options.getSubcommand(true);
-    const count = options.getInteger("count") || 0;
-    const messages = await channel.messages.fetch({ limit: 100 });
+            .setDescription(t("commands:purge.subcommands.user"))
+            .addIntegerOption((option) =>
+              option
+                .setName("amount")
+                .setDescription(t("commands:purge.options.amount"))
+                .setMinValue(1)
+                .setMaxValue(100)
+                .setRequired(true)
+            )
+            .addUserOption((option) =>
+              option
+                .setName("target")
+                .setDescription(t("commands:purge.options.target"))
+                .setRequired(true)
+            )
+        ),
+      usage: "<subcommand> <options>",
+      examples: [
+        "purge any amount:20",
+        "purge bot amount:24",
+        "purge user amount:30 target:@Node"
+      ],
+      category: "moderation",
+      cooldown: 25,
+      global: true,
+      guildOnly: true,
+      permissions: {
+        dev: false,
+        bot: ["ManageMessages", "ReadMessageHistory"],
+        user: ["ManageMessages"]
+      }
+    });
+  }
+
+  /**
+   * Execute function for this command.
+   * @param {import("@structures/BotClient.js")} client
+   * @param {import("discord.js").ChatInputCommandInteraction} interaction
+   * @param {string} lng
+   * @returns {Promise<void>}
+   */
+  async execute(client, interaction, lng) {
+    await interaction.deferReply({ flags: "Ephemeral" });
+
+    const subcommand = interaction.options.getSubcommand(true);
+    const amount = interaction.options.getInteger("amount");
+    const messages = await interaction.channel.messages.fetch({ limit: 100 });
     const messagesToDelete = [];
     let i = 0;
 
     switch (subcommand) {
       case "after": {
-        const identifier = interaction.options.getString("message");
-        const fetchedMessage = messages.get(identifier.split("/").pop());
-        if (!fetchedMessage) {
-          await interaction.followUp({
+        const identifier = interaction.options.getString("message", true);
+        const fetched = messages.get(identifier.split("/").pop());
+        if (!fetched) {
+          return await interaction.followUp({
             content: t("commands:purge.noMessage", { lng })
           });
-          return;
         }
-        messages.filter(async (message) => {
-          if (message.createdTimestamp <= fetchedMessage.createdTimestamp)
-            return;
-          messagesToDelete.push(message);
+        messages.filter(async (m) => {
+          if (m.createdTimestamp <= fetched.createdTimestamp) return;
+          messagesToDelete.push(m);
         });
         break;
       }
 
       case "any": {
-        messages.filter(async (message) => {
-          if (count <= i) return;
-          messagesToDelete.push(message);
+        messages.filter(async (m) => {
+          if (amount <= i) return;
+          messagesToDelete.push(m);
           i++;
         });
         break;
       }
 
       case "bots": {
-        messages.filter(async (message) => {
-          if (count <= i) return;
-          if (message.author.bot) messagesToDelete.push(message);
+        messages.filter(async (m) => {
+          if (amount <= i) return;
+          if (m.author.bot) messagesToDelete.push(m);
           i++;
         });
         break;
       }
 
       case "commands": {
-        messages.filter(async (message) => {
-          if (count <= i) return;
-          if (message.interactionMetadata) messagesToDelete.push(message);
+        messages.filter(async (m) => {
+          if (amount <= i) return;
+          if (m.interactionMetadata) messagesToDelete.push(m);
           i++;
         });
         break;
       }
 
       case "embeds": {
-        messages.filter(async (message) => {
-          if (count <= i) return;
-          if (message.embeds?.length > 0) messagesToDelete.push(message);
+        messages.filter(async (m) => {
+          if (m.embeds?.length === 0) return;
+          if (amount <= i) return;
+          messagesToDelete.push(m);
           i++;
         });
         break;
       }
 
       case "files": {
-        messages.filter(async (message) => {
-          if (count <= i) return;
-          if (message.attachments?.size <= 0) return;
-          messagesToDelete.push(message);
+        messages.filter(async (m) => {
+          if (m.attachments?.size === 0) return;
+          if (amount <= i) return;
+          messagesToDelete.push(m);
           i++;
         });
         break;
       }
 
       case "user": {
-        const user = interaction.options.getUser("user", true);
-        messages.filter(async (message) => {
-          if (count <= i) return;
-          if (message.author.id !== user.id) return;
-          messagesToDelete.push(message);
+        const user = interaction.options.getUser("target", true);
+        messages.filter(async (m) => {
+          if (amount <= i) return;
+          if (m.author.id !== user.id) return;
+          messagesToDelete.push(m);
           i++;
         });
         break;
       }
     }
 
-    const deletedMessages = await channel.bulkDelete(messagesToDelete, true);
+    const deleted = await interaction.channel.bulkDelete(
+      messagesToDelete,
+      true
+    );
     await interaction.followUp({
       content: t("commands:purge.reply", {
         lng,
-        count: `\`${deletedMessages.size}\``,
-        channel: `<#${channel.id}>`
+        amount: `\`${deleted.size}\``,
+        channel: `<#${interaction.channelId}>`
       })
     });
   }

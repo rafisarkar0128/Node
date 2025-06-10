@@ -1,50 +1,105 @@
+const pkg = require("@root/package.json");
 const { readdirSync, lstatSync } = require("fs");
 const { join } = require("path");
 
 module.exports = {
-  // Default languages for the bot
-  defaultLanguage: process.env.DEFAULT_LANGUAGE,
+  // default language
+  defaultLocale: process.env.DEFAULT_LOCALE ?? "en-US",
   // Available languages for the bot
-  availableLanguages: readdirSync(join(__dirname, "locales")).filter((file) => {
+  availableLocales: readdirSync(join(__dirname, "locales")).filter((file) => {
     const isDirectory = lstatSync(
       join(__dirname, "locales", file)
     ).isDirectory();
     const langFiles = readdirSync(join(__dirname, "locales", file));
-
     if (isDirectory && langFiles.length > 0) return true;
   }),
 
+  // wether to show table or not.
+  showTable: {
+    event: false, // event loader table
+    command: false // command loader table
+  },
+
   // Bot settings
   bot: {
-    // Discord client ID
+    // your bots id
     id: process.env.DISCORD_CLIENT_ID,
-    // Discord bot token
+    // your bots token
     token: process.env.DISCORD_CLIENT_TOKEN,
-    // Discord client secret
+    // your bots secret
     secret: process.env.DISCORD_CLIENT_SECRET,
-    // Bot owner ID
+    // your discord account id
     ownerId: process.env.OWNER_ID,
-    // Bot guild ID
+    // your guild id
     guildId: process.env.GUILD_ID,
-    // Bot developers ids.
-    /** @type {string[]} */
+    // default prefix
+    prefix: process.env.DEFAULT_PREFIX,
+    /**
+     * your bots developer ids
+     * @type {string[]}
+     */
     devs: process.env.DEV_IDS ? JSON.parse(process.env.DEV_IDS) : [],
     // Wheither to make the commands global or not
     global: true,
     // Whether to allow invite command or not
     allowedInvite: true,
     // Default cooldown ammount in secconds
-    defaultCooldown: 3,
-    // Syncronization logs
-    showSyncLogs: true
+    defaultCooldown: 5,
+    // Command syncronization logs
+    showSyncLogs: true,
+    // default footer for embeds
+    footer: `developed by ${pkg.author}`
+  },
+
+  // Your genius API credentials. Get it from https://genius.com/developers
+  genius: {
+    id: process.env.GENIUS_CLIENT_ID,
+    secret: process.env.GENIUS_CLIENT_SECRET,
+    token: process.env.GENIUS_CLIENT_TOKEN
   },
 
   // Mongodb URI. Get it from mongodb.com
   mongodbUri: process.env.MONGO_URI,
 
-  // Log channel ids
-  logChannel: process.env.LOG_CHANNEL_ID,
-  commandLogChannel: process.env.COMMAND_CHANNEL_ID,
+  /**
+   * MongoDB Client options
+   * @type {import("mongodb").MongoClientOptions}
+   */
+  mongodbOptions: {
+    dbName: "node",
+    timeoutMS: 10000,
+    connectTimeoutMS: 30000,
+    directConnection: false
+  },
+
+  /**
+   * Cache settings for various managers
+   * @type {Object<string, import("lru-cache").LRUCache>}
+   */
+  cacheSettings: {
+    GuildManager: {
+      max: 25000
+    },
+    UserManager: {
+      max: 50000
+    }
+  },
+
+  // logs ralated config
+  logs: {
+    general: {
+      color: "#36393F",
+      channel: process.env.CHANNEL_GENERAL
+    },
+    error: {
+      color: "#de5d5d",
+      channel: process.env.CHANNEL_ERROR
+    },
+    command: {
+      color: "#7289DA",
+      channel: process.env.CHANNEL_COMMAND
+    }
+  },
 
   // Dashboard settings
   dashboard: {
@@ -65,16 +120,19 @@ module.exports = {
     // Maximum search results to display
     maxSearchResults: 10,
     // Default player volume
-    defaultVolume: 50,
+    defaultVolume: 25,
+    // Default color to use for embeds
+    defaultEmbedColor: "#7289DA",
     // maxiimum volume allowed for the player
     maxVolume: 100,
     /**
      * Default source for the music system
+     * ! avoid anything ending with "rec". example: "sprec" or "jsrec"
      * @type {import("lavalink-client").SearchPlatform}
      */
-    defaultSearchPlatform: "yt",
+    defaultSearchPlatform: "ytmsearch",
     // Lavalink nodes for the music system
-    lavalinkNodes: require("@root/lavalink-nodes.js")
+    nodes: require("@root/lavalinkNodes.js")
   },
 
   // Settings for the economy system
@@ -124,7 +182,7 @@ module.exports = {
   },
 
   // Settings for the rank system
-  level: {
+  rank: {
     enabled: true,
     // Cooldown time in seconds for earning XP
     xpCoolDown: 10,
@@ -161,15 +219,6 @@ module.exports = {
   social: {
     enabled: true
   },
-
-  // For embeds colors. Can be used anywhere
-  colors: require("./colors.json"),
-
-  // Emojis to use with messages. Can be used everywhere.
-  emojis: require("./emojis.js"),
-
-  // Resources to use for various perposes
-  resources: require("./resources.js"),
 
   // Images to use everywhere
   images: {

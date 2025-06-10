@@ -1,40 +1,52 @@
+const BaseCommand = require("@structures/BaseCommand.js");
 const {
-  EmbedBuilder,
   SlashCommandBuilder,
+  InteractionContextType,
   ApplicationIntegrationType,
-  InteractionContextType
+  EmbedBuilder
 } = require("discord.js");
 const { t } = require("i18next");
 
-/** @type {import("@types/index").CommandStructure} */
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("roleinfo")
-    .setDescription("📖 View any role's information.")
-    .setContexts(InteractionContextType.Guild)
-    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
-    .addRoleOption((option) =>
-      option
-        .setName("role")
-        .setDescription("Select a role to view.")
-        .setRequired(true)
-    ),
-  usage: "[role]: <role>",
-  category: "information",
-  cooldown: 30,
-  global: true,
-  premium: false,
-  devOnly: false,
-  disabled: false,
-  ephemeral: false,
-  voiceChannelOnly: false,
-  botPermissions: ["SendMessages"],
-  userPermissions: ["SendMessages"],
+/**
+ * A new Command extended from BaseCommand
+ * @extends {BaseCommand}
+ */
+module.exports = class Command extends BaseCommand {
+  constructor() {
+    super({
+      data: new SlashCommandBuilder()
+        .setName("roleinfo")
+        .setDescription(t("commands:roleinfo.description"))
+        .setContexts(InteractionContextType.Guild)
+        .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
+        .addRoleOption((option) =>
+          option
+            .setName("role")
+            .setDescription(t("commands:roleinfo.options.role"))
+            .setRequired(true)
+        ),
+      usage: "roleinfo <role>",
+      examples: [
+        "roleinfo <id | mention>",
+        "roleinfo 1055796788587659284",
+        "roleinfo <@&1055796788587659284>"
+      ],
+      category: "information",
+      cooldown: 30,
+      global: true,
+      guildOnly: true
+    });
+  }
 
+  /**
+   * Execute function for this command.
+   * @param {import("@structures/BotClient.js")} client
+   * @param {import("discord.js").ChatInputCommandInteraction} interaction
+   * @param {string} lng
+   * @returns {Promise<void>}
+   */
   async execute(client, interaction, lng) {
-    const { guild, options } = interaction;
-    const role = options.getRole("role", true);
-
+    const role = interaction.options.getRole("role", true);
     const embed = new EmbedBuilder()
       .setColor(role.hexColor)
       .setThumbnail(role.icon ? role.iconURL() : null)
@@ -86,18 +98,11 @@ module.exports = {
         },
         {
           name: t("commands:roleinfo.position", { lng }),
-          value: `- ${guild.roles.cache.size - role.position}`,
+          value: `- ${interaction.guild.roles.cache.size - role.position}`,
           inline: true
         }
-      ])
-      .setFooter({
-        text: t("embeds:default.footer", {
-          lng,
-          username: client.user.username,
-          year: new Date().getFullYear()
-        })
-      });
+      ]);
 
-    await interaction.followUp({ embeds: [embed] });
+    await interaction.reply({ embeds: [embed] });
   }
 };

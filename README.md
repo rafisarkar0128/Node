@@ -53,7 +53,7 @@ Before you get started, you need to have the following:
 1. First clone the repository:
 
 ```bash
-git clone https://github.com/theassassin0128/Node.git
+git clone https://github.com/rafisarkar0128/Node.git
 ```
 
 2. Change to the directory:
@@ -112,18 +112,18 @@ pnpm run devShard # if you want to run in dev mode
 > There will be a dedicated markdown file for commands in future.
 > For now here are some public commands of the bot.
 
-| Name     | Description                                    |
-| -------- | ---------------------------------------------- |
-| ping     | 🏓 Pong! Replies with bot's response time.     |
-| botinfo  | 📖 View bot's information.                     |
-| invite   | returns a link button with bot's invite URL.   |
-| language | 🌐 Change your language for the bot.           |
+| Name     | Description                                     |
+| -------- | ----------------------------------------------- |
+| ping     | 🏓 Pong! Replies with bot's response time.      |
+| botinfo  | 📖 View bot's information.                      |
+| invite   | returns a link button with bot's invite URL.    |
+| language | 🌐 Change your language for the bot.            |
 | play     | ▶ Play songs or tracks from available sources. |
-| purge    | 🧹 Delete bulk amount of messages.             |
+| purge    | 🧹 Delete bulk amount of messages.              |
 
 ## 🤝 Contributing
 
-Please check the [issues page](https://github.com/theassassin0128/Node/issues) for open issues and feature requests.
+Please check the [issues page](https://github.com/rafisarkar0128/Node/issues) for open issues and feature requests.
 
 Thank you for your interest in contributing to this project! Remember to follow these guidelines when contributing:
 
@@ -143,28 +143,28 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 Thanks go to these wonderful people for their contributions:
 
-<a href="https://github.com/theassassin0128/Node/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=theassassin0128/Node" />
+<a href="https://github.com/rafisarkar0128/Node/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=rafisarkar0128/Node" />
 </a>
 
 [bot-invite]: https://discord.com/oauth2/authorize?client_id=1030698369435320350
-[version-shield]: https://img.shields.io/github/package-json/v/theassassin0128/Node?style=for-the-badge
-[version-shield-link]: https://github.com/theassassin0128/Node
-[contributors-shield]: https://img.shields.io/github/contributors/theassassin0128/Node?style=for-the-badge
-[contributors-url]: https://github.com/theassassin0128/Node/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/theassassin0128/Node?style=for-the-badge
-[forks-url]: https://github.com/theassassin0128/Node/network/members
-[stars-shield]: https://img.shields.io/github/stars/theassassin0128/Node?style=for-the-badge
-[stars-url]: https://github.com/theassassin0128/Node/stargazers
-[issues-shield]: https://img.shields.io/github/issues/theassassin0128/Node?style=for-the-badge
-[issues-url]: https://github.com/theassassin0128/Node/issues
+[version-shield]: https://img.shields.io/github/package-json/v/rafisarkar0128/Node?style=for-the-badge
+[version-shield-link]: https://github.com/rafisarkar0128/Node
+[contributors-shield]: https://img.shields.io/github/contributors/rafisarkar0128/Node?style=for-the-badge
+[contributors-url]: https://github.com/rafisarkar0128/Node/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/rafisarkar0128/Node?style=for-the-badge
+[forks-url]: https://github.com/rafisarkar0128/Node/network/members
+[stars-shield]: https://img.shields.io/github/stars/rafisarkar0128/Node?style=for-the-badge
+[stars-url]: https://github.com/rafisarkar0128/Node/stargazers
+[issues-shield]: https://img.shields.io/github/issues/rafisarkar0128/Node?style=for-the-badge
+[issues-url]: https://github.com/rafisarkar0128/Node/issues
 [support-shield]: https://img.shields.io/discord/1054284394791178291?logo=discord&colorB=7289DA&style=for-the-badge
 [support-server]: https://discord.gg/E6H9VvBdTk
-[license-shield]: https://img.shields.io/github/license/theassassin0128/Node?style=for-the-badge
-[license-url]: https://github.com/theassassin0128/Node/blob/master/LICENSE
-[codeql]: https://img.shields.io/github/actions/workflow/status/theassassin0128/Node/codeql.yml?style=for-the-badge&logo=github&label=Codeql
-[codeql-url]: https://github.com/theassassin0128/Node/actions/workflows/codeql.yml
-[dependency-review]: https://img.shields.io/github/actions/workflow/status/theassassin0128/Node/dependency-review.yml?style=for-the-badge&label=Dependency%20Review&logo=github
-[dependency-review-url]: https://github.com/theassassin0128/Node/actions?query=workflow%3A%22Dependency+Review%22
-[code-factor]: https://img.shields.io/codefactor/grade/github/theassassin0128/node?logo=codefactor&logoColor=%23F44A6A&style=for-the-badge
-[code-factor-url]: https://www.codefactor.io/repository/github/theassassin0128/node
+[license-shield]: https://img.shields.io/github/license/rafisarkar0128/Node?style=for-the-badge
+[license-url]: https://github.com/rafisarkar0128/Node/blob/master/LICENSE
+[codeql]: https://img.shields.io/github/actions/workflow/status/rafisarkar0128/Node/codeql.yml?style=for-the-badge&logo=github&label=Codeql
+[codeql-url]: https://github.com/rafisarkar0128/Node/actions/workflows/codeql.yml
+[dependency-review]: https://img.shields.io/github/actions/workflow/status/rafisarkar0128/Node/dependency-review.yml?style=for-the-badge&label=Dependency%20Review&logo=github
+[dependency-review-url]: https://github.com/rafisarkar0128/Node/actions?query=workflow%3A%22Dependency+Review%22
+[code-factor]: https://img.shields.io/codefactor/grade/github/rafisarkar0128/node?logo=codefactor&logoColor=%23F44A6A&style=for-the-badge
+[code-factor-url]: https://www.codefactor.io/repository/github/rafisarkar0128/node

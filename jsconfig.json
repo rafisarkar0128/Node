@@ -5,12 +5,24 @@
     "resolveJsonModule": true,
     "baseUrl": "./",
     "paths": {
-      "@root/*": ["./*"],
-      "@src/*": ["./src/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@types/*": ["./src/types/*"],
-      "@database/*": ["./src/database/*"]
+      "@root/*": [
+        "./*"
+      ],
+      "@src/*": [
+        "./src/*"
+      ],
+      "@db/*": [
+        "./src/db/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@structures/*": [
+        "./src/structures/*"
+      ]
     }
   },
-  "exclude": ["node_modules", "**/node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

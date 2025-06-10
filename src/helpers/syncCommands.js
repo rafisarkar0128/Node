@@ -4,21 +4,12 @@ const checkForChange = require("./checkForChange.js");
 
 /**
  * A function to synchronize Application Commands
- * @param {import("@lib/Bot.js").Bot} client
+ * @param {import("@structures/BotClient.js")} client
  * @returns {Promise<void>}
  */
 async function syncCommands(client) {
-  if (typeof client !== "object") {
-    throw new TypeError(
-      `The ${chalk.yellow(
-        "client"
-      )} parameter must be an object. Received type ${typeof client}`
-    );
-  }
-
   const { guildId, showSyncLogs } = client.config.bot;
   const oldCommands = await fetchCommands(client);
-  client.logger.warn("Syncing application commands (This may take a while)");
 
   // This section is for the very first time when the commands are not registered
   // or when the bot's commands are removed from discord
@@ -28,10 +19,8 @@ async function syncCommands(client) {
 
     client.commands.forEach((command) => {
       if (showSyncLogs) {
-        console.log(
-          `[${chalk.greenBright("ADDED")}]: ${chalk.cyanBright(
-            command.data.name
-          )}`
+        client.logger.info(
+          `${chalk.greenBright("ADDED")} command ${chalk.yellowBright(command.data.name)}`
         );
       }
 
@@ -67,10 +56,8 @@ async function syncCommands(client) {
         }
 
         if (showSyncLogs) {
-          console.log(
-            `[${chalk.greenBright("ADDED")}]: ${chalk.cyanBright(
-              command.data.name
-            )}`
+          client.logger.info(
+            `[${chalk.greenBright("ADDED")}]: command ${chalk.cyanBright(command.data.name)}`
           );
         }
       } catch (error) {
@@ -91,10 +78,8 @@ async function syncCommands(client) {
         await command.data.delete();
 
         if (showSyncLogs) {
-          console.log(
-            `[${chalk.redBright("DELETED")}]: ${chalk.cyanBright(
-              command.data.name
-            )}`
+          client.logger.info(
+            `[${chalk.redBright("DELETED")}]: command ${chalk.cyanBright(command.data.name)}`
           );
         }
       } catch (error) {
@@ -131,8 +116,8 @@ async function syncCommands(client) {
           }
 
           if (showSyncLogs) {
-            console.log(
-              `[${chalk.yellowBright("MODIFIED")}]: ${chalk.cyanBright(
+            client.logger.info(
+              `[${chalk.yellowBright("MODIFIED")}]: command ${chalk.cyanBright(
                 newCommand.data.name
               )}`
             );
@@ -144,7 +129,7 @@ async function syncCommands(client) {
     }
   }
 
-  client.logger.success("All application commands are in sync");
+  client.logger.info("All application commands are in sync");
 }
 
 module.exports = syncCommands;

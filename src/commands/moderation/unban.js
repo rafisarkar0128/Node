@@ -1,44 +1,68 @@
+const BaseCommand = require("@structures/BaseCommand.js");
 const {
   SlashCommandBuilder,
-
-  PermissionFlagsBits
+  InteractionContextType,
+  ApplicationIntegrationType,
+  PermissionFlagsBits,
+  EmbedBuilder
 } = require("discord.js");
+const { t } = require("i18next");
 
-module.exports = {
-  disabled: true,
-  data: new SlashCommandBuilder()
-    .setName("unban")
-    .setDescription("Unban a member from the server.")
-    .setDMPermission(false)
-    .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
-    .addStringOption((option) =>
-      option
-        .setName("target")
-        .setDescription("The id of the member.")
-        .setRequired(true)
-    ),
-  permissionsRequired: ["BanMembers"],
-  botPermissions: ["BanMembers"],
+/**
+ * A new Command extended from BaseCommand
+ * @extends {BaseCommand}
+ */
+module.exports = class Command extends BaseCommand {
+  constructor() {
+    super({
+      data: new SlashCommandBuilder()
+        .setName("unban")
+        .setDescription(t("commands:unban.description"))
+        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
+        .setContexts(InteractionContextType.Guild)
+        .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
+        .addUserOption((option) =>
+          option
+            .setName("target")
+            .setDescription(t("commands:unban.options.target"))
+            .setRequired(true)
+        ),
+      usage: "unban <user>",
+      examples: [
+        "unban target:@node",
+        "unban target:67498023237511",
+        "unban target:node#5678"
+      ],
+      category: "moderation",
+      cooldown: 15,
+      global: true,
+      guildOnly: true,
+      permissions: {
+        bot: ["BanMembers"],
+        user: ["BanMembers", "ModerateMembers"]
+      }
+    });
+  }
+
   /**
-   *
-   * @param {ChatInputCommandInteraction} interaction
-   * @param {Client} client
+   * Execute function for this command.
+   * @param {import("@structures/BotClient.js")} client
+   * @param {import("discord.js").ChatInputCommandInteraction} interaction
+   * @param {string} lng
+   * @returns {Promise<void>}
    */
-  execute: async (interaction) => {
-    await interaction.deferReply();
+  async execute(client, interaction, lng) {
+    await interaction.deferReply({ flags: "Ephemeral" });
 
-    const { options, guild } = interaction;
-    const target = options.getString("target");
+    const target = interaction.options.getString("target", true);
+    const user = await interaction.guild.members.unban(target);
+    const embed = new EmbedBuilder().setColor(client.color.Good).setDescription(
+      t("commands:unban.unbanned", {
+        lng,
+        user: `<@${user.id}> (${user.id})`
+      })
+    );
 
-    try {
-      const user = await guild.members.unban(target);
-      return interaction.editReply({
-        content: `Successfully unbanned **${user.username}**.`
-      });
-    } catch (error) {
-      interaction.editReply({
-        content: `There was an error while executing the command. ${error}`
-      });
-    }
+    await interaction.followUp({ embeds: [embed] });
   }
 };

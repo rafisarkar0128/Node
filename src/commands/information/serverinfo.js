@@ -1,53 +1,69 @@
+const BaseCommand = require("@structures/BaseCommand.js");
 const {
-  EmbedBuilder,
   SlashCommandBuilder,
-  ChannelType,
+  InteractionContextType,
   ApplicationIntegrationType,
-  InteractionContextType
+  EmbedBuilder,
+  ChannelType
 } = require("discord.js");
 const { t } = require("i18next");
 
-/** @type {import("@types/index").CommandStructure} */
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("serverinfo")
-    .setDescription("📖 View the server information.")
-    .setContexts(InteractionContextType.Guild)
-    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall),
-  usage: "",
-  category: "information",
-  cooldown: 30,
-  global: true,
-  premium: false,
-  devOnly: false,
-  disabled: false,
-  ephemeral: false,
-  voiceChannelOnly: false,
-  botPermissions: ["SendMessages"],
-  userPermissions: ["SendMessages"],
+/**
+ * A new Command extended from BaseCommand
+ * @extends {BaseCommand}
+ */
+module.exports = class Command extends BaseCommand {
+  constructor() {
+    super({
+      data: new SlashCommandBuilder()
+        .setName("serverinfo")
+        .setDescription(t("commands:serverinfo.description"))
+        .setContexts(InteractionContextType.Guild)
+        .setIntegrationTypes(ApplicationIntegrationType.GuildInstall),
+      usage: "serverinfo",
+      examples: ["serverinfo"],
+      category: "information",
+      cooldown: 25,
+      global: true,
+      guildOnly: true
+    });
+  }
 
+  /**
+   * Execute function for this command.
+   * @param {import("@structures/BotClient.js")} client
+   * @param {import("discord.js").ChatInputCommandInteraction} interaction
+   * @param {string} lng
+   * @returns {Promise<void>}
+   */
   async execute(client, interaction, lng) {
-    const guild = await client.guilds.fetch(interaction.guild.id);
+    await interaction.deferReply();
+
+    const guild = await interaction.guild.fetch();
     const members = await guild.members.fetch();
     const channels = guild.channels.cache;
     const emojis = guild.emojis.cache;
     const stickers = guild.stickers.cache;
 
     const embed = new EmbedBuilder()
-      .setColor(client.utils.getRandomColor())
+      .setColor(client.color.getRandom())
       .setThumbnail(guild.iconURL({ size: 1024, extension: "png" }))
       .setImage(guild.bannerURL())
-      .setAuthor({ name: guild.name, iconURL: guild.iconURL() })
+      .setAuthor({
+        name: guild.name,
+        iconURL: guild.iconURL({ extension: "png" })
+      })
+      .setDescription(guild.description)
       .addFields([
         {
           name: t("commands:serverinfo.id", { lng }),
           value: `- ${guild.id}`,
-          inline: true
+          inline: false
         },
         {
           name: t("commands:serverinfo.ownedBy", { lng }),
           value: `- <@${guild.ownerId}>`,
-          inline: true
+          inline: false
         },
         {
           name: t("commands:serverinfo.boost", { lng }),
@@ -107,16 +123,8 @@ module.exports = {
           ].join("\n"),
           inline: true
         }
-      ])
-      .setFooter({
-        text: t("embeds:default.footer", {
-          username: client.user.username,
-          year: new Date().getFullYear()
-        })
-      });
+      ]);
 
-    await interaction.followUp({
-      embeds: [embed]
-    });
+    await interaction.followUp({ embeds: [embed] });
   }
 };

@@ -1,170 +1,213 @@
+const BaseCommand = require("@structures/BaseCommand.js");
 const {
   SlashCommandBuilder,
-  PermissionFlagsBits,
+  InteractionContextType,
   ApplicationIntegrationType,
-  InteractionContextType
+  EmbedBuilder
 } = require("discord.js");
 const { t } = require("i18next");
 
-/** @type {import("@types/command").CommandStructure} */
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("play")
-    .setDescription("▶ Play songs or tracks from available sources.")
-    .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
-    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
-    .setContexts(InteractionContextType.Guild)
-    .addStringOption((option) =>
-      option
-        .setName("query")
-        .setDescription("Song name or url to play.")
-        .setRequired(true)
-    )
-    .addStringOption((option) =>
-      option
-        .setName("source")
-        .setDescription("The source to play from.")
-        .setRequired(false)
-        .addChoices([
-          {
-            name: "Apple Music",
-            value: "applemusic"
-          },
-          {
-            name: "Bandcamp",
-            value: "bandcamp"
-          },
-          {
-            name: "Deezer",
-            value: "deezer"
-          },
-          {
-            name: "JioSaavn",
-            value: "jiosaavn"
-          },
-          {
-            name: "Sound Cloud",
-            value: "soundcloud"
-          },
-          {
-            name: "Spotify",
-            value: "spotify"
-          },
-          {
-            name: "Yandex Music",
-            value: "yandexmusic"
-          },
-          {
-            name: "YouTube",
-            value: "youtube"
-          },
-          {
-            name: "YouTube Music",
-            value: "youtubemusic"
-          }
-        ])
-    )
-    .addBooleanOption((option) =>
-      option
-        .setName("autoplay")
-        .setDescription(
-          "Set AutoPlay option. Can be disabled or enabled later."
+/**
+ * A new Command extended from BaseCommand
+ * @extends {BaseCommand}
+ */
+module.exports = class Command extends BaseCommand {
+  constructor() {
+    super({
+      data: new SlashCommandBuilder()
+        .setName("play")
+        .setDescription(t("commands:play.description"))
+        .setContexts(InteractionContextType.Guild)
+        .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
+        .addStringOption((option) =>
+          option
+            .setName("query")
+            .setDescription(t("commands:play.options.query"))
+            .setRequired(true)
         )
-        .setRequired(false)
-    ),
-  usage: "[query]: <song|url> (source): <source> (autoplay): <true|false>",
-  category: "music",
-  cooldown: 0,
-  global: true,
-  premium: false,
-  devOnly: false,
-  disabled: false,
-  ephemeral: true,
-  voiceChannelOnly: true,
-  botPermissions: ["SendMessages", "Connect", "Speak", "EmbedLinks"],
-  userPermissions: ["SendMessages", "Connect"],
-  execute: async (client, interaction, lng) => {
-    const { user, guild, channel, options } = interaction;
-    const { defaultVolume } = client.config.music;
+        .addStringOption((option) =>
+          option
+            .setName("source")
+            .setDescription(t("commands:search.options.source"))
+            .setRequired(false)
+            .addChoices([
+              {
+                name: "Apple Music",
+                value: "applemusic:amsearch"
+              },
+              {
+                name: "Bandcamp",
+                value: "bandcamp:bcsearch"
+              },
+              {
+                name: "Dezeer",
+                value: "dezeer:dzsearch"
+              },
+              {
+                name: "JioSaavn",
+                value: "jiosaavn:jssearch"
+              },
+              {
+                name: "Sound Cloud",
+                value: "soundcloud:scsearch"
+              },
+              {
+                name: "Spotify",
+                value: "spotify:spsearch"
+              },
+              {
+                name: "Yandex Music",
+                value: "yandexmusic:ymsearch"
+              },
+              {
+                name: "YouTube",
+                value: "youtube:ytsearch"
+              },
+              {
+                name: "YouTube Music",
+                value: "youtube:ytmsearch"
+              },
+              {
+                name: "VK Music",
+                value: "vkmusic:vksearch"
+              },
+              {
+                name: "Tidal",
+                value: "tidal:tdsearch"
+              },
+              {
+                name: "Qobuz",
+                value: "qobuz:qbsearch"
+              }
+            ])
+        )
+        .addBooleanOption((option) =>
+          option
+            .setName("play_next")
+            .setDescription(t("commands:play.options.play_next"))
+            .setRequired(false)
+        ),
+      usage: "play <song|url>",
+      examples: [
+        "play example",
+        "play https://www.youtube.com/watch?v=example",
+        "play https://open.spotify.com/track/example",
+        "play http://www.example.com/example.mp3"
+      ],
+      category: "music",
+      cooldown: 5,
+      global: true,
+      guildOnly: true,
+      player: { voice: true },
+      permissions: {
+        bot: ["Connect", "Speak"],
+        user: ["SendMessages", "Connect"]
+      }
+    });
+  }
 
-    const member = await guild.members.fetch(user.id);
+  /**
+   * Execute function for this command.
+   * @param {import("@structures/BotClient.js")} client
+   * @param {import("discord.js").ChatInputCommandInteraction} interaction
+   * @param {string} lng
+   * @returns {Promise<void>}
+   */
+  async execute(client, interaction, lng) {
+    await interaction.deferReply();
+
+    const { options, channelId, guildId } = interaction;
+    let player = client.lavalink.getPlayer(guildId);
+    const embed = new EmbedBuilder().setColor(client.color.Good);
     const query = options.getString("query", true);
-    const source = options.getString("source");
-    const autoplay = options.getBoolean("autoplay");
-    const vc = member?.voice?.channel;
-    if (!vc) return;
+    const playNext = options.getBoolean("play_next", false);
+    const vc = interaction.member.voice?.channel;
 
-    let player = client.lavalink.getPlayer(guild.id);
+    const src = interaction.options.getString("source", false) ?? undefined;
+    let source = undefined;
+    let nodes = client.lavalink.nodeManager.leastUsedNodes();
+
+    if (src) {
+      const [sourceName, searchSource] = src.split(/:/g);
+      source = searchSource;
+      nodes = nodes.filter((n) => n.info.sourceManagers.includes(sourceName));
+      if (nodes.length <= 0) {
+        embed
+          .setColor(client.color.Wrong)
+          .setDescription(t("player:noSource", { lng, source: sourceName }));
+        return await interaction.followUp({ embeds: [embed] });
+      }
+    }
+
     if (!player) {
       player = client.lavalink.createPlayer({
-        guildId: guild.id,
+        guildId: guildId,
         voiceChannelId: vc.id,
-        textChannelId: channel.id,
+        textChannelId: channelId,
         selfDeaf: true,
-        selfMute: true,
-        volume: defaultVolume,
+        selfMute: false,
+        volume: client.config.music.defaultVolume,
         instaUpdateFiltersFix: true,
         applyVolumeAsFilter: false,
-        node: client.lavalink.nodeManager.leastUsedNodes("memory")[0],
-        vcRegion: vc?.rtcRegion
+        vcRegion: vc?.rtcRegion,
+        node: nodes[Math.floor(Math.random() * nodes.length)]
       });
     }
-
-    // if (source && !player.node.info.sourceManagers.includes(source)) {
-    // 	await interaction.followUp({
-    // 		content: t("commands:play.source"),
-    // 	});
-    // 	return;
-    // }
-
     if (!player.connected) await player.connect();
 
-    if (player.voiceChannelId !== vc.id) {
-      await interaction.followUp({
-        content: t("commands:play.joinVc", { lng, vc: vc.id })
-      });
-      return;
+    const res = await player.search({ query, source }, interaction.user);
+
+    if (!res || res.loadType === "error") {
+      embed
+        .setColor(client.color.Wrong)
+        .setDescription(t("player:loadFailed", { lng }));
+      await interaction.followUp({ embeds: [embed] });
+      return setTimeout(() => interaction.deleteReply(), 5_000);
     }
 
-    const response = await player.search({ query, source }, member);
-
-    if (!response || response.loadType === "error") {
-      await interaction.followUp({
-        content: t("commands:play.loadFailed", { lng })
-      });
-      return;
+    if (!res.tracks?.length || res.loadType === "empty") {
+      embed
+        .setColor(client.color.Wrong)
+        .setDescription(t("player:emptyResult", { lng }));
+      await interaction.followUp({ embeds: [embed] });
+      return setTimeout(() => interaction.deleteReply(), 5_000);
     }
 
-    if (!response.tracks?.length || response.loadType === "empty") {
-      await interaction.followUp({
-        content: t("commands:play.emptyQueue", { lng })
-      });
-      return;
-    }
+    if (res.loadType === "playlist") {
+      if (playNext) {
+        await player.queue.splice(0, 0, res.tracks);
+      } else {
+        await player.queue.add(res.tracks);
+      }
 
-    if (response.loadType === "playlist") {
-      await player.queue.add(response.tracks);
-      await interaction.followUp({
-        content: t("commands:play.playlist", {
+      embed.setDescription(
+        t("player:addPlaylist", {
           lng,
-          size: response.tracks.length,
-          title: response.playlist?.name ? response.playlist.name : "playlist"
+          size: res.tracks.length,
+          title: res.playlist?.name ? res.playlist.name : "playlist"
         })
-      });
+      );
+      await interaction.followUp({ embeds: [embed] });
     } else {
-      const track = response.tracks.shift();
-      await player.queue.add(track);
-      await interaction.followUp({
-        content: t("commands:play.track", {
+      let track = res.tracks.shift();
+      let position = 0;
+
+      if (playNext) {
+        position = await player.queue.splice(0, 0, track);
+      } else {
+        position = await player.queue.add(track);
+      }
+
+      embed.setColor(client.color.Good).setDescription(
+        t("player:addTrack", {
           lng,
-          title: `[\`${track.info.title}\`](<${track.info.uri}>)`,
-          author: track.info.author,
-          position: player.queue.tracks.length
+          position,
+          track: `[${track.info.title}](<${track.info.uri}>)`
         })
-      });
+      );
+      await interaction.followUp({ embeds: [embed] });
     }
 
-    if (autoplay) player.set("autoplay", true);
-    if (!player.playing) return await player.play();
+    if (!player.playing) await player.play({ paused: false });
   }
 };

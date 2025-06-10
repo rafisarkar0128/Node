@@ -4,10 +4,10 @@
 
 The versions listed below are the only supported versions.
 
-| Version    | Supported |
-| ---------- | --------- |
-| ^3.3.x-dev | ✅        |
-| <3.3.x     | ❌        |
+| Version | Supported |
+| ------- | --------- |
+| ^4.0.x  | ✅        |
+| <4.0.x  | ❌        |
 
 ## Reporting a Vulnerability
 

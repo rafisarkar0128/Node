@@ -4,11 +4,12 @@ const pkg = require("@root/package.json");
 
 /**
  * A function to log Welcome Message
+ * @param {import("@structures/BotClient.js")} client
  * @returns {void}
- * @example logVanity(client);
+ * @example loadWelcome();
  */
-function loadWelcome() {
-  // ansi chalk with escape
+module.exports = function (client) {
+  // ansi colors with escape
   let esc = "\u001b[0m";
   let red = "\u001b[31m";
   let blue = "\u001b[36m";
@@ -33,45 +34,13 @@ function loadWelcome() {
     .replace(/w/g, white)
     .replace(/e/g, esc);
 
-  const border = {
-    topBody: `─`,
-    topJoin: `┬`,
-    topLeft: `┌`,
-    topRight: `┐`,
-    bottomBody: `─`,
-    bottomJoin: `┴`,
-    bottomLeft: `└`,
-    bottomRight: `┘`,
-    bodyLeft: `│`,
-    bodyRight: `│`,
-    bodyJoin: `│`,
-    joinBody: `─`,
-    joinLeft: `├`,
-    joinRight: `┤`,
-    joinJoin: `┼`
-  };
-
-  /**
-   * A function to get table border in provided color
-   * @param {import("@types/index").ChalkColors} color
-   * @returns {object}
-   * @example const border = getTableBorder(color);
-   */
-  function getTableBorder(color) {
-    const newBorder = {};
-    Object.keys(border).forEach((key) => {
-      newBorder[key] = chalk[color](border[key]);
-    });
-    return newBorder;
-  }
-
   /** @type {import("table").TableUserConfig} */
   const config = {
     columnDefault: {
       alignment: "center",
       width: 62
     },
-    border: getTableBorder("greenBright"),
+    border: client.utils.getTableBorder("greenBright"),
     drawHorizontalLine: (lineIndex, rowCount) => {
       return lineIndex === 0 || lineIndex === rowCount;
     }
@@ -87,7 +56,5 @@ function loadWelcome() {
   ];
 
   console.log(vanity);
-  console.log(table(data, config));
-}
-
-module.exports = loadWelcome;
+  return console.log(table(data, config));
+};

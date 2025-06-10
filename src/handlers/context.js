@@ -3,8 +3,8 @@ const { t } = require("i18next");
 
 /**
  * A function to handle contextmenu commands
- * @param {import("@lib/Bot").Bot} client
- * @param {ContextMenuCommandInteraction} interaction
+ * @param {import("@root/src/libold/Bot").Bot} client
+ * @param {import("discord.js").ContextMenuCommandInteraction} interaction
  * @returns {Promise<void>}
  */
 async function handleContext(client, interaction) {
@@ -22,7 +22,7 @@ async function handleContext(client, interaction) {
   const command = client.commands.get(commandName);
   const member = await guild.members.fetch(user.id);
   const bot = await guild.members.fetchMe();
-  const lng = (await client.db.guilds.get(guild))?.locale;
+  const lng = (await client.db.guilds.get(guild.id))?.locale;
 
   try {
     if (!command) {
@@ -86,13 +86,13 @@ async function handleContext(client, interaction) {
     });
 
     await command.execute(client, interaction, lng);
+    await client.utils.logs.send({ interaction, command }, { type: "command" });
   } catch (error) {
     await interaction.followUp({
       content: t("handlers:context.error", { lng })
     });
     client.logger.error(error);
-    client.utils.sendError(error);
   }
 }
 
-module.exports = { handleContext };
+module.exports = handleContext;

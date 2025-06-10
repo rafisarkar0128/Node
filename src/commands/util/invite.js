@@ -1,50 +1,66 @@
+const BaseCommand = require("@structures/BaseCommand.js");
 const {
   SlashCommandBuilder,
+  InteractionContextType,
+  ApplicationIntegrationType,
   ButtonBuilder,
   ActionRowBuilder,
-  ButtonStyle,
-  OAuth2Scopes
+  ButtonStyle
 } = require("discord.js");
 const { t } = require("i18next");
 
-/** @type {import("@types/index").CommandStructure} */
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("invite")
-    .setDescription("returns a link button with bots invite url."),
-  usage: "",
-  category: "utility",
-  cooldown: 0,
-  global: true,
-  premium: false,
-  devOnly: false,
-  disabled: false,
-  ephemeral: true,
-  voiceChannelOnly: false,
-  botPermissions: ["SendMessages", "SendMessagesInThreads"],
-  userPermissions: ["SendMessages", "SendMessagesInThreads"],
+/**
+ * A new Command extended from BaseCommand
+ * @extends {BaseCommand}
+ */
+module.exports = class Command extends BaseCommand {
+  constructor() {
+    super({
+      data: new SlashCommandBuilder()
+        .setName("invite")
+        .setDescription(t("commmands:invite.description"))
+        .setContexts(
+          InteractionContextType.Guild,
+          InteractionContextType.BotDM,
+          InteractionContextType.PrivateChannel
+        )
+        .setIntegrationTypes(
+          ApplicationIntegrationType.GuildInstall,
+          ApplicationIntegrationType.UserInstall
+        ),
+      usage: "invite",
+      examples: ["invite"],
+      category: "utility",
+      cooldown: 5,
+      global: true
+    });
+  }
 
+  /**
+   * Execute function for this command.
+   * @param {import("@structures/BotClient.js")} client
+   * @param {import("discord.js").ChatInputCommandInteraction} interaction
+   * @param {string} lng
+   * @returns {Promise<void>}
+   */
   async execute(client, interaction, lng) {
-    if (
-      !client.config.bot.allowedInvite &&
-      !client.config.bot.devs.includes(interaction.user.id)
-    ) {
-      return interaction.followUp({
-        content: t("commands:invite.disabled", { lng })
+    await interaction.deferReply();
+
+    const { bot } = client.config;
+    if (!bot.allowedInvite && !bot.devs.includes(interaction.user.id)) {
+      return await interaction.reply({
+        content: t("commands:invite.disabled", { lng }),
+        flags: "Ephemeral"
       });
     }
 
-    const inviteLink = client.generateInvite({
-      permissions: BigInt(1759218604441335),
-      scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands]
-    });
     const inviteButton = new ButtonBuilder()
       .setLabel("Invite Link")
       .setStyle(ButtonStyle.Link)
-      .setURL(inviteLink)
+      .setURL(this.client.utils.invites.createBot())
       .setEmoji("✉️");
 
-    return interaction.followUp({
+    await interaction.repply({
       content: t("commands:invite.reply", { lng }),
       components: [new ActionRowBuilder().addComponents(inviteButton)]
     });
