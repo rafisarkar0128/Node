@@ -9,3 +9,6 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    # For chalk, ignore all updates
+    ignore:
+      - dependency-name: "chalk"
