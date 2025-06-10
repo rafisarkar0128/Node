@@ -4,7 +4,7 @@
  * Also the setup is copied from elsewhere.
  */
 
-const { Signale, SignaleOptions } = require("signale");
+const { Signale } = require("signale");
 
 /** @@type {SignaleOptions} */
 const options = {

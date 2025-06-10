@@ -34,7 +34,7 @@ module.exports = {
     disabled: false,
     minArgsCount: 0,
     subcommands: [],
-    execute: async (client, message, args, data) => {
+    execute: async (client, message) => {
       message.reply({
         embeds: [
           new EmbedBuilder()
@@ -134,7 +134,7 @@ module.exports = {
     ephemeral: true,
     global: true,
     disabled: false,
-    execute: async (client, interaction, data) => {
+    execute: async (client, interaction) => {
       return interaction.reply({
         embeds: [
           new EmbedBuilder()
@@ -143,77 +143,77 @@ module.exports = {
         ]
       });
 
-      const channel = interaction.options.getChannel("channel");
-      const doc = await errorlog.findOne({
-        Enabled: "true"
-      });
+      //   const channel = interaction.options.getChannel("channel");
+      //   const doc = await errorlog.findOne({
+      //     Enabled: "true"
+      //   });
 
-      if (!channel && !doc) {
-        return interaction.reply({
-          ephemeral: true,
-          embeds: [
-            new EmbedBuilder()
-              .setColor(client.colors.wrong)
-              .setDescription(
-                "❌ **As there is no error message logging system and no channel has been provided so I am going to do nothing.**"
-              )
-          ]
-        });
-      }
+      //   if (!channel && !doc) {
+      //     return interaction.reply({
+      //       ephemeral: true,
+      //       embeds: [
+      //         new EmbedBuilder()
+      //           .setColor(client.colors.wrong)
+      //           .setDescription(
+      //             "❌ **As there is no error message logging system and no channel has been provided so I am going to do nothing.**"
+      //           )
+      //       ]
+      //     });
+      //   }
 
-      if (!channel && doc) {
-        await errorlog.findOneAndDelete({
-          Enabled: "true"
-        });
-        return interaction.reply({
-          ephemeral: true,
-          embeds: [
-            new EmbedBuilder()
-              .setColor(client.colors.wrong)
-              .setDescription(
-                "**❌ As no channel has been provided so I have disabled the error message logging system.**"
-              )
-          ]
-        });
-      }
+      //   if (!channel && doc) {
+      //     await errorlog.findOneAndDelete({
+      //       Enabled: "true"
+      //     });
+      //     return interaction.reply({
+      //       ephemeral: true,
+      //       embeds: [
+      //         new EmbedBuilder()
+      //           .setColor(client.colors.wrong)
+      //           .setDescription(
+      //             "**❌ As no channel has been provided so I have disabled the error message logging system.**"
+      //           )
+      //       ]
+      //     });
+      //   }
 
-      if (channel && !doc) {
-        await errorlog.create({
-          Channel: channel.id,
-          Enabled: "true"
-        });
-        return interaction.reply({
-          ephemeral: true,
-          embeds: [
-            new EmbedBuilder()
-              .setColor(client.colors.good)
-              .setDescription(
-                `**✅ Successfully enabled the error message logging system. <#${channel.id}> | This channel has been set to log error messages.**`
-              )
-          ]
-        });
-      }
+      //   if (channel && !doc) {
+      //     await errorlog.create({
+      //       Channel: channel.id,
+      //       Enabled: "true"
+      //     });
+      //     return interaction.reply({
+      //       ephemeral: true,
+      //       embeds: [
+      //         new EmbedBuilder()
+      //           .setColor(client.colors.good)
+      //           .setDescription(
+      //             `**✅ Successfully enabled the error message logging system. <#${channel.id}> | This channel has been set to log error messages.**`
+      //           )
+      //       ]
+      //     });
+      //   }
 
-      if (channel && doc) {
-        await errorlog.findOneAndUpdate(
-          {
-            Enabled: "true"
-          },
-          {
-            Channel: channel.id
-          }
-        );
-        return interaction.reply({
-          ephemeral: true,
-          embeds: [
-            new EmbedBuilder()
-              .setColor(client.colors.good)
-              .setDescription(
-                `**✅ Successfully updated error message logging utility. <#${channel.id}> | This channel has been set to log error messages.**`
-              )
-          ]
-        });
-      }
+      //   if (channel && doc) {
+      //     await errorlog.findOneAndUpdate(
+      //       {
+      //         Enabled: "true"
+      //       },
+      //       {
+      //         Channel: channel.id
+      //       }
+      //     );
+      //     return interaction.reply({
+      //       ephemeral: true,
+      //       embeds: [
+      //         new EmbedBuilder()
+      //           .setColor(client.colors.good)
+      //           .setDescription(
+      //             `**✅ Successfully updated error message logging utility. <#${channel.id}> | This channel has been set to log error messages.**`
+      //           )
+      //       ]
+      //     });
+      //   }
     }
   }
 };

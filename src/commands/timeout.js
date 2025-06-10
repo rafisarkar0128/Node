@@ -29,8 +29,8 @@ module.exports = {
     usage: "<member> <duration> (<reason>)",
     disabled: true,
     minArgsCount: 2,
-    subcommands: [],
-    execute: (client, message, args, data) => {}
+    subcommands: []
+    // execute: (client, message, args, data) => {} //Prefix cmd is disabled
   },
   slash: {
     data: new SlashCommandBuilder()

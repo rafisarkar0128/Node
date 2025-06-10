@@ -1,4 +1,4 @@
-const { GuildBan, EmbedBuilder } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 
 /** @type {import("@types/index").EventStructure} */
 module.exports = {
@@ -13,7 +13,9 @@ module.exports = {
     const banEmbed = new EmbedBuilder()
       .setTitle("BAN NOTICE")
       .setDescription(
-        `${ban.user}, you have been banned from *${ban.guild.name}*.\n **Reason**: ${ban.reason ?? "None was given"}.`
+        `${ban.user}, you have been banned from *${
+          ban.guild.name
+        }*.\n **Reason**: ${ban.reason ?? "None was given"}.`
       )
       .setColor(client.config.colors.Wrong)
       .setThumbnail(ban.guild.iconURL({ extension: "png", size: 1024 }))

@@ -1,4 +1,4 @@
-const { Player, Track } = require("lavalink-client");
+// const { Player, Track } = require("lavalink-client");
 
 /**
  * A function to add new songs to an empty queue if autoplay feature is enabled
@@ -54,7 +54,16 @@ async function autoPlayFunction(player, lastTrack) {
     return;
   }
 
-  if (lastTrack.info.sourceName === ("youtube" || "youtubemusic")) {
+  // Incorrect: This condition only checks for "youtube"
+  // if (lastTrack.info.sourceName === ("youtube" || "youtubemusic"))
+
+  // Correct: Checks both conditions separately
+  // if (lastTrack.info.sourceName === "youtube" || lastTrack.info.sourceName === "youtubemusic")
+
+  // Even clearer and cleaner: Using .includes()
+  // if (["youtube", "youtubemusic"].includes(lastTrack.info.sourceName))
+
+  if (["youtube", "youtubemusic"].includes(lastTrack.info.sourceName)) {
     const res = await player.search(
       {
         query: `https://www.youtube.com/watch?v=${lastTrack.info.identifier}&list=RD${lastTrack.info.identifier}`,

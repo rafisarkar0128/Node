@@ -1,8 +1,8 @@
 const chalk = require("chalk");
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 const config = require("@src/config.js");
 
-const GuildSchema = new mongoose.Schema(
+const GuildSchema = new Schema(
   {
     _id: { type: String, required: true },
     locale: { type: String, default: config.defaultLanguage },
@@ -134,7 +134,7 @@ class Guilds {
     this.schema = GuildSchema;
 
     // the model
-    this.model = mongoose.model("guild", GuildSchema);
+    this.model = model("guild", GuildSchema);
   }
 
   /**

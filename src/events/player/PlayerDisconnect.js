@@ -7,7 +7,7 @@ module.exports = {
    * @param {string} voiceChannelId
    * @returns
    */
-  async execute(client, player, voiceChannelId) {
+  async execute(client, player) {
     const guild = client.guilds.cache.get(player.guildId);
     if (!guild) return;
 

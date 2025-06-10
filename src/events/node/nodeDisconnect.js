@@ -1,5 +1,4 @@
 const chalk = require("chalk");
-const { t } = require("i18next");
 
 /** @type {import("@types/event").EventStructure} */
 module.exports = {

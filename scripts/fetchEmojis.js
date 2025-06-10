@@ -11,7 +11,7 @@ async function fetchAndSaveEmojis() {
 
   if (!Array.isArray(data.items)) {
     return console.log(
-      chalk.redBright(`Unable to fetch emojis from ${application.name}`)
+      chalk.redBright(`Unable to fetch emojis from ${app.name}`)
     );
   }
 

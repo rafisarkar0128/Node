@@ -142,9 +142,11 @@ module.exports = {
               return memberArray.push(member);
             }
 
-            case "humans": {
-              if (!member.user.bot) return memberArray.push(member);
-            }
+            case "humans":
+              {
+                if (!member.user.bot) return memberArray.push(member);
+              }
+              break;
 
             case "bots": {
               if (member.user.bot) return memberArray.push(member);

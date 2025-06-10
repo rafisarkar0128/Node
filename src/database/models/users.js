@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 const chalk = require("chalk");
 
-const UserSchema = new mongoose.Schema(
+const UserSchema = new Schema(
   {
     _id: String,
     username: String,
@@ -33,7 +33,7 @@ class Users {
   constructor(client) {
     this.client = client;
     this.schema = UserSchema;
-    this.model = mongoose.model("user", UserSchema);
+    this.model = model("user", UserSchema);
   }
 
   /**

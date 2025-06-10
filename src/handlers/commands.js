@@ -1,4 +1,4 @@
-const { ChatInputCommandInteraction, MessageFlags } = require("discord.js");
+const { MessageFlags } = require("discord.js");
 const { t } = require("i18next");
 
 /**

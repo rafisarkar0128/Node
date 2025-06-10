@@ -1,8 +1,3 @@
-const {
-  ChatInputCommandInteraction,
-  ContextMenuCommandInteraction,
-  AutocompleteInteraction
-} = require("discord.js");
 const { handleCommands } = require("./commands.js");
 const { handleContext } = require("./context.js");
 const { handleAutocomplete } = require("./autocomplete.js");

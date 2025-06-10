@@ -1,4 +1,4 @@
-const { EmbedBuilder, GuildMember, MessageFlags } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 const { t } = require("i18next");
 
 /** @type {import("@types/index").EventStructure} */

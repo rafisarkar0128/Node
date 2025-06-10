@@ -1,5 +1,3 @@
-const { AutocompleteInteraction } = require("discord.js");
-
 /**
  * A function to handle AutoComplete Commands
  * @param {import("@lib/Bot").Bot} client

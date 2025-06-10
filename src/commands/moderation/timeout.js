@@ -1,6 +1,4 @@
 const {
-  Client,
-  ChatInputCommandInteraction,
   PermissionFlagsBits,
   SlashCommandBuilder,
   EmbedBuilder
@@ -8,127 +6,114 @@ const {
 const ms = require("ms");
 
 module.exports = {
-  disabled: true,
   data: new SlashCommandBuilder()
     .setName("timeout")
-    .setDescription("Restrict a members ability to communicate.")
+    .setDescription("Restrict a member's ability to communicate.")
     .setDMPermission(false)
     .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
-    .addUserOption((options) =>
-      options
+    .addUserOption((option) =>
+      option
         .setName("target")
-        .setDescription("Select a member.")
+        .setDescription("Select a member to timeout.")
         .setRequired(true)
     )
-    .addStringOption((options) =>
-      options
+    .addStringOption((option) =>
+      option
         .setName("duration")
-        .setDescription("The Duration of the Tiemout")
+        .setDescription("Timeout duration (e.g., 10m, 1h, 1d, max 28d).")
         .setRequired(true)
     )
-    .addStringOption((options) =>
-      options
+    .addStringOption((option) =>
+      option
         .setName("reason")
-        .setDescription("Reason for this timeout")
+        .setDescription("Reason for timeout.")
         .setMaxLength(512)
     ),
-  //devOnly: false,
-  //testOnly: false,
-  permissions: ["ModerateMembers"],
-  botPermissions: ["ModerateMembers"],
+
   /**
-   *
-   * @param {Client} interaction
-   * @param {ChatInputCommandInteraction} client
-   * @returns
+   * @param {ChatInputCommandInteraction} interaction
+   * @param {Client} client
    */
   execute: async (interaction, client) => {
-    const { options, guild, member, user } = interaction;
+    const { options, member } = interaction;
 
     const target = options.getMember("target");
     const duration = options.getString("duration");
     const reason = options.getString("reason") || "No reason specified.";
 
-    const errorsArray = [];
-
     const errorEmbed = new EmbedBuilder()
-      .setAuthor({ name: "Could not timeout member due to" })
-      .setColor(colour.error);
+      .setTitle("⚠️ Timeout Failed")
+      .setColor(client.colors.Error);
 
-    if (!target)
+    // Basic Checks
+    if (!target) {
       return interaction.reply({
         embeds: [
-          errorEmbed.setDescription("Member has most likely left the server.")
+          errorEmbed.setDescription("Member not found (might have left).")
         ],
         ephemeral: true
       });
-
-    if (!ms(duration) || ms(duration) > ms("28d"))
-      errorsArray.push("Time provided is invalid or over the 28d limit.");
-
-    if (!target.moderatable || !target.manageable)
-      errorsArray.push("Selected target is not moderatable by this bot.");
-
-    if (member.roles.highest.position < target.roles.highest.position)
-      errorsArray.push("Selected target has a higher role position than you.");
-
-    if (errorsArray.length) {
-      interaction.reply({
-        embeds: [errorEmbed.setDescription(errorsArray.join("\n"))],
-        ephemeral: true
-      });
-      return;
     }
 
-    try {
-      await target.timeout(ms(duration), reason);
-    } catch (err) {
-      interaction.reply({
+    const durationMs = ms(duration);
+    if (!durationMs || durationMs > ms("28d")) {
+      return interaction.reply({
         embeds: [
           errorEmbed.setDescription(
-            "Could not timeout member due to an unknown error."
+            "Invalid duration. Must be a valid time under 28 days."
           )
         ],
         ephemeral: true
       });
-      return;
     }
 
-    const newInfractionObject = {
-      Issuer: member.id,
-      IssuerTag: user.tag,
-      Reason: reason,
-      Date: Date.now
-    };
-
-    let userData = await infractions.findOne({
-      Guild: guild.id,
-      User: target.id
-    });
-
-    if (!userData) {
-      userData = await infractions.create({
-        Guild: guild.id,
-        User: target.id,
-        Infractions: [newInfractionObject]
+    if (!target.moderatable) {
+      return interaction.reply({
+        embeds: [
+          errorEmbed.setDescription(
+            "I can't timeout this member. Check my role position."
+          )
+        ],
+        ephemeral: true
       });
-    } else {
-      userData.Infractions.push(newInfractionObject) && (await userData.save());
     }
 
-    const sEmbed = new EmbedBuilder()
-      .setAuthor({ name: "Timeout Issues", iconURL: guild.iconURL() })
-      .setColor(colour.success)
-      .setDescription(
-        [
-          `${target} was issued a timeout for **${ms(ms(duration), {
-            long: true
-          })}** by ${member}`,
-          `\nBringing their total infractions to **${userData.Infractions.length} points**`,
-          `\n**Reason :** ${reason}`
-        ].join("\n")
-      );
+    if (member.roles.highest.position <= target.roles.highest.position) {
+      return interaction.reply({
+        embeds: [
+          errorEmbed.setDescription(
+            "You can't timeout someone with equal or higher role."
+          )
+        ],
+        ephemeral: true
+      });
+    }
 
-    return interaction.reply({ embeds: [sEmbed] });
+    // Apply timeout
+    try {
+      await target.timeout(durationMs, reason);
+    } catch (err) {
+      return interaction.reply({
+        embeds: [
+          errorEmbed.setDescription(
+            `Failed to timeout member. Error: \`${err.message}\``
+          )
+        ],
+        ephemeral: true
+      });
+    }
+
+    // Success Embed
+    const successEmbed = new EmbedBuilder()
+      .setTitle("✅ Timeout Successful")
+      .setColor(client.colors.Lime)
+      .setDescription(
+        `${target} has been timed out for **${ms(durationMs, {
+          long: true
+        })}**.`
+      )
+      .addFields({ name: "Reason", value: reason });
+
+    return interaction.reply({ embeds: [successEmbed] });
   }
 };

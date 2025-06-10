@@ -1,8 +1,6 @@
 const {
   SlashCommandBuilder,
-  EmbedBuilder,
-  ChatInputCommandInteraction,
-  Client,
+
   PermissionFlagsBits
 } = require("discord.js");
 
@@ -26,7 +24,7 @@ module.exports = {
    * @param {ChatInputCommandInteraction} interaction
    * @param {Client} client
    */
-  execute: async (interaction, client) => {
+  execute: async (interaction) => {
     await interaction.deferReply();
 
     const { options, guild } = interaction;

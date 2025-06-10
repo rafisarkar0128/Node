@@ -1,10 +1,4 @@
-const {
-  ButtonInteraction,
-  Message,
-  MessageFlags,
-  EmbedBuilder,
-  GuildMember
-} = require("discord.js");
+const { MessageFlags, GuildMember } = require("discord.js");
 const { t } = require("i18next");
 
 /**

@@ -209,17 +209,13 @@ module.exports = {
       }
     }
 
-    try {
-      const deletedMessages = await channel.bulkDelete(messagesToDelete, true);
-      await interaction.followUp({
-        content: t("commands:purge.reply", {
-          lng,
-          count: `\`${deletedMessages.size}\``,
-          channel: `<#${channel.id}>`
-        })
-      });
-    } catch (error) {
-      throw error;
-    }
+    const deletedMessages = await channel.bulkDelete(messagesToDelete, true);
+    await interaction.followUp({
+      content: t("commands:purge.reply", {
+        lng,
+        count: `\`${deletedMessages.size}\``,
+        channel: `<#${channel.id}>`
+      })
+    });
   }
 };

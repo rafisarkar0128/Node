@@ -46,7 +46,7 @@ module.exports = (client) => {
   });
 
   // Handle unhandledRejection event
-  process.on("unhandledRejection", (reason, promise) => {
+  process.on("unhandledRejection", (reason) => {
     console.log(
       chalk.yellow(
         "[AntiCrash] | [UnhandledRejection_Logs] | [Start] : ==============="
@@ -76,7 +76,7 @@ module.exports = (client) => {
   });
 
   // Handle uncaughtException event
-  process.on("uncaughtException", (error, origin) => {
+  process.on("uncaughtException", (error) => {
     console.log(
       chalk.yellow(
         "[AntiCrash] | [UncaughtException_Logs] | [Start] : ==============="

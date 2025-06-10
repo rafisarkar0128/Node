@@ -55,7 +55,7 @@ module.exports = {
   botPermissions: ["SendMessages", "Connect", "Speak", "EmbedLinks"],
   userPermissions: ["SendMessages"],
   execute: async (client, interaction, lng) => {
-    const { user, member, guild, channel, options } = interaction;
+    const { guild, options } = interaction;
     const subCommand = options.getSubcommand(true);
     const player = client.lavalink.getPlayer(guild.id);
 
@@ -75,7 +75,9 @@ module.exports = {
         await message.edit({
           components: client.utils.getPlayerButtons(player)
         });
-      } catch (error) {}
+      } catch (error) {
+        console.error(`Failed to edit message in player.js: ${error}`);
+      }
     }
 
     switch (subCommand) {
