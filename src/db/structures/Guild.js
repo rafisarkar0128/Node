@@ -10,7 +10,7 @@ class Guild extends Base {
   constructor(client, data) {
     super(client);
 
-    // this._patch(data);
+    this._patch(data);
 
     /**
      * The id of the guild

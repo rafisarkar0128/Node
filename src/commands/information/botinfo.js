@@ -112,15 +112,15 @@ module.exports = class Command extends BaseCommand {
 
     const actionRow = new ActionRowBuilder().setComponents(
       new ButtonBuilder()
-        .setLabel("Support")
+        .setLabel(t("misc:buttons.support", { lng }))
         .setStyle(ButtonStyle.Link)
         .setURL(client.config.links.supportServer),
       new ButtonBuilder()
-        .setLabel("Website")
+        .setLabel(t("misc:buttons.website", { lng }))
         .setStyle(ButtonStyle.Link)
         .setURL(client.config.links.botWebsite),
       new ButtonBuilder()
-        .setLabel("Invite Me")
+        .setLabel(t("misc:buttons.invite", { lng }))
         .setStyle(ButtonStyle.Link)
         .setURL(client.utils.invites.getBot())
     );
