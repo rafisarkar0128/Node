@@ -1,3 +1,8 @@
 {
-  "pageInfo": "Page {{index}} of {{total}}"
+  "pageInfo": "Page {{index}} of {{total}}",
+  "buttons": {
+    "invite": "Invite Me",
+    "website": "Website",
+    "support": "Support"
+  }
 }

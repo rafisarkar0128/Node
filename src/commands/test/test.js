@@ -1,5 +1,9 @@
 const BaseCommand = require("@structures/BaseCommand.js");
-const { SlashCommandBuilder } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  InteractionContextType,
+  ApplicationIntegrationType
+} = require("discord.js");
 
 /**
  * A new Command extended from BaseCommand
@@ -10,10 +14,16 @@ module.exports = class Command extends BaseCommand {
     super({
       data: new SlashCommandBuilder()
         .setName("test")
-        .setDescription("Testing some features."),
-      cetagory: "general",
-      cooldown: 0,
+        .setDescription("Testing some features.")
+        .setContexts(InteractionContextType.Guild)
+        .setIntegrationTypes(ApplicationIntegrationType.GuildInstall),
+      usage: "Testing out some features.",
+      examples: ["test"],
+      category: "general",
+      cooldown: 5,
       global: true,
+      guildOnly: false,
+      testOnly: true,
       permissions: { dev: true }
     });
   }

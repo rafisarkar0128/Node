@@ -4,7 +4,15 @@
     "errorTitle": "AN ERROR OCCURRED",
     "reason": "None was specified."
   },
-
+  "about": {
+    "description": "Shows information about the bot",
+    "fields": {
+      "creator": "Creator",
+      "repository": "Repository",
+      "support": "Support",
+      "description": "**Node** is a multipurpose Discord bot that is built with [discord.js](https://github.com/discordjs/discord.js), a powerful [Node.js](https://nodejs.org) module that allows you to easily interact with the [Discord API](https://discord.com/developers/docs/intro)."
+    }
+  },
   "autoplay": {
     "description": "Toggles autoplay for the player.",
     "enabled": "`✅` | Autoplay has been `ENABLED`.",
