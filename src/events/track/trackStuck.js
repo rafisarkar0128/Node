@@ -39,13 +39,10 @@ module.exports = class Event extends BaseEvent {
     if (!channel) return;
 
     await channel.send({ embeds: [errorEmbed] });
-    const message = (
-      await channel.messages.fetch({
-        force: true
-      })
-    ).get(player.get("messageId"));
 
+    const message = await channel.messages.fetch(player.get("messageId"));
     if (!message || !message.editable) return;
+
     await message.edit({ components: [] }).catch(() => null);
   }
 };

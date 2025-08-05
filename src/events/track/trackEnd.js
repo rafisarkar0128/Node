@@ -24,13 +24,9 @@ module.exports = class Event extends BaseEvent {
     const channel = client.channels.cache.get(player.textChannelId);
     if (!channel) return;
 
-    const message = (
-      await channel.messages.fetch({
-        force: true
-      })
-    ).get(player.get("messageId"));
-
+    const message = await channel.messages.fetch(player.get("messageId"));
     if (!message || !message.editable) return;
+
     await message.edit({ components: [] }).catch(() => null);
   }
 };

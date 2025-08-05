@@ -5,7 +5,6 @@ const { t } = require("i18next");
  * A function to handle player buttons controls
  * @param {import("@structures/BotClient.js")} client
  * @param {import("discord.js").Message} message
- * @param {import("lavalink-client").Player} player
  * @returns {void}
  */
 module.exports = async function handlePlayerButtons(client, message) {
@@ -89,6 +88,32 @@ module.exports = async function handlePlayerButtons(client, message) {
           t("player:volumeBy", {
             lng: locale,
             volume,
+            user: interaction.user.username
+          })
+        );
+      }
+
+      case "rewind": {
+        let { position } = await player.seek(player.position - 10000);
+        position = client.utils.formatTime(position);
+        await editButtons();
+        return await replyAndDelete(
+          t("player:rewoundBy", {
+            lng: locale,
+            position,
+            user: interaction.user.username
+          })
+        );
+      }
+
+      case "forward": {
+        let { position } = await player.seek(player.position + 10000);
+        position = client.utils.formatTime(position);
+        await editButtons();
+        return await replyAndDelete(
+          t("player:forwardedBy", {
+            lng: locale,
+            position,
             user: interaction.user.username
           })
         );
@@ -253,19 +278,6 @@ module.exports = async function handlePlayerButtons(client, message) {
 //     content: `**${current.info.title} (${res.provider})**:\n\n${lyrics}`,
 //     flags: MessageFlags.Ephemeral
 //   });
-// }
-
-// case "rewind": {
-//   let { position } = await player.seek(player.position - 10000);
-//   position = client.utils.formats.toDigitalTime(position);
-//   await editButtons(t("player:rewoundBy", { lng, position, user }));
-//
-// }
-// case "forward": {
-//   let { position } = await player.seek(player.position + 10000);
-//   position = client.utils.formats.toDigitalTime(position);
-//   await editButtons(t("player:forwardedBy", { lng, position, user }));
-//
 // }
 
 //	case "clear_queue":

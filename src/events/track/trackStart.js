@@ -65,7 +65,8 @@ module.exports = class Event extends BaseEvent {
       components: [...client.utils.buttons.getPlayer(player)]
     });
     player.set("messageId", message.id);
-    return client.handlers.handlePlayerButtons(client, message);
+
+    client.handlers.handlePlayerButtons(client, message);
   }
 };
 
