@@ -58,7 +58,7 @@
     "figures": "^6.1.0",
     "genius-lyrics": "^4.4.7",
     "glob": "^13.0.0",
-    "i18next": "^25.2.1",
+    "i18next": "^26.0.2",
     "i18next-fs-backend": "^2.6.0",
     "lavalink-client": "^2.5.5",
     "lru-cache": "^11.1.0",
