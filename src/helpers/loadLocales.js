@@ -11,8 +11,11 @@ const Backend = require("i18next-fs-backend");
  * await client.helpers.loadLanguages(client);
  */
 module.exports = async function (client) {
-  // initializing i18next with i18next-fs-backend
-  await i18next.use(Backend).init({
+  /**
+   * @type {i18next.InitOptions}
+   */
+  const i18nConfig = {
+    showSupportNotice: false,
     initAsync: false,
     load: "currentOnly",
     ns: ["commands", "context", "embeds", "misc", "handlers", "player"],
@@ -32,7 +35,9 @@ module.exports = async function (client) {
       loadPath: join(__dirname, "../locales/{{lng}}/{{ns}}.json"),
       addPath: join(__dirname, "../locales/{{lng}}/{{ns}}.missing.json")
     }
-  });
+  };
+  // initializing i18next with i18next-fs-backend
+  await i18next.use(Backend).init(i18nConfig);
 
   client.logger.info("Loaded languages successfully.");
 };

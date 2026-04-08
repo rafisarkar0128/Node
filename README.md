@@ -1,3 +1,8 @@
+> [!WARNING]
+> This project is archived and permanently discontinued.
+> No new updates, fixes, pull requests, feature requests, or support will be provided.
+> Read my final words here: [Final Words & Thanks](#-final-words--thanks)
+
 [![Version][version-shield]][version-shield-link]
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
@@ -13,17 +18,15 @@
 
 **Node** is a multipurpose Discord bot that is built with [discord.js](https://github.com/discordjs/discord.js), a powerful [Node.js](https://nodejs.org) module that allows you to easily interact with the [Discord API](https://discord.com/developers/docs/intro).
 
-[✉️ Invite Node][bot-invite] • [🆘 Support Server][support-server] • [📝 Bug & Request Feature][issues-url]
-
-## 📊 Road Map
+## 📊 Final Project Snapshot
 
 - [x] **Basic Bot**
 - [x] **Music Bot**
 - [x] **Moderation Bot**
 - [x] **Information Bot**
-- [ ] **Website**
-- [ ] **Dashboard**
-- [ ] **Documentation**
+- [ ] **Website** (cancelled)
+- [ ] **Dashboard** (cancelled)
+- [ ] **Documentation** (cancelled)
 
 ## 💡 Features
 
@@ -78,11 +81,11 @@ npm install -g pnpm
 4. Copy `example.lavalink-nodes.js` to `lavalink-nodes.js`
 
 > [!IMPORTANT]
-> If you are using external nodes then add them. For locally hosted node no need to add extra info.
+> If you are using external nodes then add them. For locally hosted node make sure the host, port, and password are correct.
 
 5. Copy `.env.example` to `.env` and fill in all the required values.
 
-6. Now go to [Discord Developer Page](https://discord.com/developers/applications) select your application and head to OAuth2 tab. In OAuth2 URL Generator select "bot" and "application.commands" scopes, scroll down select "Administrator" permission, copy the URL, open the URL and invite the bot to your server.
+6. Now go to [Discord Developer Page](https://discord.com/developers/applications) select your application or create a new one if you don't have one. Then, head to OAuth2 tab. In OAuth2 URL Generator select "bot" and "application.commands" scopes, scroll down select "Administrator" permission, copy the URL, open the URL and invite the bot to your server.
 
 7. Start the bot:
 
@@ -92,10 +95,10 @@ pnpm start
 pnpm run dev # if you want to run in dev mode
 ```
 
-8. Start using the bot. Use `/ping` or `/botinfo` commands.
+8. Now you can start using the bot. Use the `/ping` or `/botinfo` command.
 
 > [!NOTE]
-> By default, the bot loads slash commands globally. To load slash commands to a single server, go to `src/config.js`, in `bot` change value of `global` to `false`. This will make sure that the slash commands are available only in your server.
+> By default, the bot loads slash commands to a single server. To load slash commands globally, go to `src/config.js`, in `bot` object, change value of `global` to `true`. This will make sure that the slash commands are available in every server the bot has access to.
 
 ## 🗝️ Sharding
 
@@ -108,32 +111,24 @@ pnpm run devShard # if you want to run in dev mode
 
 ## 📜 Commands
 
-> [!NOTE]
-> There will be a dedicated markdown file for commands in future.
-> For now here are some public commands of the bot.
+Here examples of some of the commands that are available in the bot:
 
-| Name     | Description                                     |
-| -------- | ----------------------------------------------- |
-| ping     | 🏓 Pong! Replies with bot's response time.      |
-| botinfo  | 📖 View bot's information.                      |
-| invite   | returns a link button with bot's invite URL.    |
-| language | 🌐 Change your language for the bot.            |
+| Name     | Description                                    |
+| -------- | ---------------------------------------------- |
+| ping     | 🏓 Pong! Replies with bot's response time.     |
+| botinfo  | 📖 View bot's information.                     |
+| invite   | returns a link button with bot's invite URL.   |
+| language | 🌐 Change your language for the bot.           |
 | play     | ▶ Play songs or tracks from available sources. |
-| purge    | 🧹 Delete bulk amount of messages.              |
+| purge    | 🧹 Delete bulk amount of messages.             |
 
 ## 🤝 Contributing
 
-Please check the [issues page](https://github.com/rafisarkar0128/Node/issues) for open issues and feature requests.
+This project is archived and no longer accepts pull requests, feature requests, issue reports, or ongoing maintenance contributions.
 
-Thank you for your interest in contributing to this project! Remember to follow these guidelines when contributing:
+If you want to continue improving this bot, you are welcome to fork this repository and maintain your own version.
 
-1. Fork the repository and create a new branch for your feature or bug fix.
-2. Write clean and concise code that follows the established coding style.
-3. Create detailed and thorough documentation for any new features or changes.
-4. Write and run tests for your code.
-5. Submit a pull request with your changes. Your contribution will be reviewed, and any necessary feedback or changes will be discussed with you.
-
-💖 I appreciate your help in making this project better!
+Thank you to everyone who contributed and supported this project.
 
 ## 📄 License
 
@@ -146,6 +141,16 @@ Thanks go to these wonderful people for their contributions:
 <a href="https://github.com/rafisarkar0128/Node/graphs/contributors">
 <img src="https://contrib.rocks/image?repo=rafisarkar0128/Node" />
 </a>
+
+## 🙏 Final Words & Thanks
+
+This project has been a meaningful part of my coding journey, and I have officially ended development on it.
+
+Thank you to everyone who supported this project, contributed ideas, tested features, and helped it grow.
+
+I am especially thankful to the open-source ecosystem, including tools and communities around Node.js, discord.js, Lavalink, MongoDB, and many other resources that helped me learn, improve, and build with confidence.
+
+Working on this project taught me a lot and helped me become a better developer. Thank you for being part of that journey.
 
 [bot-invite]: https://discord.com/oauth2/authorize?client_id=1030698369435320350
 [version-shield]: https://img.shields.io/github/package-json/v/rafisarkar0128/Node?style=for-the-badge

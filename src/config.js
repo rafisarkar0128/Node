@@ -1,5 +1,6 @@
 const pkg = require("@root/package.json");
 const { readdirSync, lstatSync } = require("fs");
+const { ServerApiVersion } = require("mongodb");
 const { join } = require("path");
 
 module.exports = {
@@ -40,7 +41,7 @@ module.exports = {
      */
     devs: process.env.DEV_IDS ? JSON.parse(process.env.DEV_IDS) : [],
     // Wheither to make the commands global or not
-    global: true,
+    global: false,
     // Whether to allow invite command or not
     allowedInvite: true,
     // Default cooldown ammount in secconds
@@ -69,7 +70,11 @@ module.exports = {
     dbName: "node",
     timeoutMS: 10000,
     connectTimeoutMS: 30000,
-    directConnection: false
+    directConnection: false,
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true
+    }
   },
 
   /**

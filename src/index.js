@@ -1,5 +1,5 @@
 console.clear(); // clearing the console before initializing.
-require("dotenv").config(); // Load environment variables from .env file
+require("dotenv").config({ quiet: true }); // Load environment variables from .env file
 require("module-alias/register"); // Register module aliases
 
 const { GatewayIntentBits, Partials } = require("discord.js");

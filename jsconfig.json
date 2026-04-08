@@ -3,26 +3,13 @@
     "module": "commonjs",
     "target": "ES6",
     "resolveJsonModule": true,
-    "baseUrl": "./",
     "paths": {
-      "@root/*": [
-        "./*"
-      ],
-      "@src/*": [
-        "./src/*"
-      ],
-      "@db/*": [
-        "./src/db/*"
-      ],
-      "@utils/*": [
-        "./src/utils/*"
-      ],
-      "@structures/*": [
-        "./src/structures/*"
-      ]
+      "@root/*": ["./*"],
+      "@src/*": ["./src/*"],
+      "@db/*": ["./src/db/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@structures/*": ["./src/structures/*"]
     }
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

@@ -52,7 +52,7 @@ module.exports = [
   "messageUpdate",
   "presenceUpdate",
   "raw",
-  "ready",
+  "clientReady",
   "roleCreate",
   "roleDelete",
   "roleUpdate",

@@ -190,7 +190,7 @@ module.exports = class Command extends BaseCommand {
       await interaction.followUp({ embeds: [embed] });
     } else {
       let track = res.tracks.shift();
-      let position = 0;
+      let position;
 
       if (playNext) {
         position = await player.queue.splice(0, 0, track);
