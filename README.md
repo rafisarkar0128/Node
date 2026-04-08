@@ -1,5 +1,5 @@
 > [!WARNING]
-> This project is archived and permanently discontinued.
+> As of 9th April 2026, this project is officially archived and permanently discontinued.
 > No new updates, fixes, pull requests, feature requests, or support will be provided.
 > Read my final words here: [Final Words & Thanks](#-final-words--thanks)
 
