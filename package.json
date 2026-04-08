@@ -48,7 +48,7 @@
     "mongodb": "^7.1.1",
     "nodemon": "^3.1.14",
     "prettier": "^3.8.1",
-    "undici": "^7.24.7"
+    "undici": "^8.0.2"
   },
   "dependencies": {
     "chalk": "4.1.2",
